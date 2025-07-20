@@ -1,9 +1,8 @@
 name: Build
 
 on:
+  push:
   pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       release_tag:
@@ -11,7 +10,44 @@ on:
         type: string
 
 jobs:
+  dependabot-build:
+    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          fetch-depth: '0'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          log-accepted-android-sdk-licenses: false
+          cmdline-tools-version: '12266719'
+          packages: 'platforms;android-35 build-tools;35.0.0 platform-tools'
+
+      - name: Minimal build verification
+        run: |
+          echo "🟢 Running minimal build verification for Dependabot PR"
+          echo "Dependency updates in PR: ${{ github.event.pull_request.title }}"
+
+      - name: Add Dependabot label
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ['dependencies']
+            })
+
+  # Job utama untuk build reguler (non-Dependabot)
   build:
+    if: github.actor != 'dependabot[bot]' || github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -114,13 +150,6 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-#    - name: Decode Keystore
-#      uses: timheuer/base64-to-file@v1
-#      id: android_keystore
-#      with:
-#        fileName: "android_keystore.jks"
-#        encodedString: ${{ secrets.APP_KEYSTORE_BASE64 }}
-
     - name: Build APK
       run: |
         cd ${{ github.workspace }}/V2rayNG
@@ -175,11 +204,11 @@ jobs:
       with:
         repository: MRT-project/Neko-ray
         token: ${{ secrets.MY_TOKEN }}
+        tag_name: ${{ github.event.inputs.release_tag }}
+        make_latest: true
         files: |
           ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*arm64-v8a.apk
           ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*armeabi-v7a.apk
           ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*x86.apk
           ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*x86_64.apk
           ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*universal.apk
-        tag_name: ${{ github.event.inputs.release_tag }}
-        make_latest: true
