@@ -21,4 +21,9 @@
         android:id="@+id/menu_report"
         android:title="Report"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:title="Settings"
+        app:showAsAction="never" />
 </menu>

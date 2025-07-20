@@ -41,10 +41,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Connections" />
+                    android:text="Active Connections" />
 
                 <TextView
-                    android:id="@+id/tv_total_connections"
+                    android:id="@+id/tv_active_connections"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -60,13 +60,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Servers" />
+                    android:text="Total Bandwidth" />
 
                 <TextView
-                    android:id="@+id/tv_total_servers"
+                    android:id="@+id/tv_total_bandwidth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="0 MB"
                     android:textSize="24sp" />
             </LinearLayout>
         </LinearLayout>
@@ -92,10 +92,17 @@
             android:layout_marginTop="8dp"
             android:max="100" />
 
+        <Button
+            android:id="@+id/btn_start_monitoring"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Start Monitoring" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
             <Button

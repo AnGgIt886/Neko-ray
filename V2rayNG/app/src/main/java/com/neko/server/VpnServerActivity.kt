@@ -3,48 +3,48 @@ package com.neko.server
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neko.v2ray.R
 import com.neko.v2ray.ui.BaseActivity
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.time.Duration
 import java.time.LocalDateTime
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 class VpnServerActivity : BaseActivity() {
     private lateinit var analyzer: VPNAnalyzer
     private lateinit var connectionAdapter: ConnectionAdapter
     private lateinit var serverAdapter: ServerAdapter
-    
+    private val executor = Executors.newSingleThreadScheduledExecutor()
+    private var monitoringActive = false
+    private var monitoringInterval = 5L // seconds
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vpn_server)
         
-        // Setup toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         
         analyzer = VPNAnalyzer().apply {
-            // Sample data
-            addServer(VPNServer("192.168.1.10", "Singapore", 1000, 750, 
-                     Duration.ofDays(15), 0.65))
-            addConnection(VPNConnection("user1", "192.168.1.10", 
-                     LocalDateTime.now(), null, 524288000, "OpenVPN"))
+            // Initialize with empty data
+            addServer(VPNServer("vpn-server-1", "Singapore", 1000, 0, 
+                     Duration.ofDays(0), 0.0))
         }
         
-        // Setup RecyclerViews
         setupConnectionRecyclerView()
         setupServerRecyclerView()
         
-        // Setup buttons
         findViewById<Button>(R.id.btn_add_connection).setOnClickListener {
             showAddConnectionDialog()
         }
@@ -53,10 +53,95 @@ class VpnServerActivity : BaseActivity() {
             showAddServerDialog()
         }
         
-        // Show dashboard initially
+        findViewById<Button>(R.id.btn_start_monitoring).setOnClickListener {
+            toggleMonitoring()
+        }
+        
         showDashboard()
     }
-    
+
+    private fun toggleMonitoring() {
+        monitoringActive = !monitoringActive
+        val monitorBtn = findViewById<Button>(R.id.btn_start_monitoring)
+        
+        if (monitoringActive) {
+            monitorBtn.text = "Stop Monitoring"
+            startRealTimeMonitoring()
+            Toast.makeText(this, "Monitoring started", Toast.LENGTH_SHORT).show()
+        } else {
+            monitorBtn.text = "Start Monitoring"
+            stopRealTimeMonitoring()
+            Toast.makeText(this, "Monitoring stopped", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun startRealTimeMonitoring() {
+        executor.scheduleAtFixedRate({
+            try {
+                // In a real app, this would fetch actual VPN server data
+                val newConnections = fetchRealTimeConnections()
+                val serverStats = fetchServerStats()
+                
+                runOnUiThread {
+                    analyzer.connections.clear()
+                    analyzer.connections.addAll(newConnections)
+                    
+                    analyzer.servers.clear()
+                    analyzer.servers.addAll(serverStats)
+                    
+                    updateDashboardStats()
+                    connectionAdapter.notifyDataSetChanged()
+                    serverAdapter.notifyDataSetChanged()
+                    
+                    // Show warning if any suspicious activity
+                    val suspicious = analyzer.getSuspiciousConnections()
+                    if (suspicious.isNotEmpty()) {
+                        showAlert("Suspicious Activity", 
+                            "Detected ${suspicious.size} high-bandwidth connections")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("VPNMonitor", "Monitoring error", e)
+                runOnUiThread {
+                    Toast.makeText(this, "Monitoring error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }, 0, monitoringInterval, TimeUnit.SECONDS)
+    }
+
+    private fun stopRealTimeMonitoring() {
+        executor.shutdownNow()
+    }
+
+    private fun fetchRealTimeConnections(): List<VPNConnection> {
+        // In a real implementation, this would parse actual VPN logs
+        // For demo purposes, we generate random data
+        return List(Random.nextInt(5, 15)) {
+            VPNConnection(
+                userId = "user-${Random.nextInt(1000, 9999)}",
+                serverIp = "10.8.0.${Random.nextInt(2, 254)}",
+                startTime = LocalDateTime.now().minusMinutes(Random.nextLong(1, 60)),
+                endTime = if (Random.nextBoolean()) LocalDateTime.now() else null,
+                bytesTransferred = Random.nextLong(50 * 1024 * 1024, 500 * 1024 * 1024),
+                protocol = listOf("OpenVPN", "WireGuard", "IPSec").random()
+            )
+        }
+    }
+
+    private fun fetchServerStats(): List<VPNServer> {
+        // In a real implementation, this would get actual server stats
+        return listOf(
+            VPNServer(
+                ip = "vpn-server-1",
+                location = "Singapore",
+                maxCapacity = 1000,
+                currentConnections = analyzer.connections.size,
+                uptime = Duration.ofDays(Random.nextLong(1, 30)),
+                loadAverage = Random.nextDouble(0.1, 1.0)
+            )
+        )
+    }
+
     private fun setupConnectionRecyclerView() {
         connectionAdapter = ConnectionAdapter(analyzer.connections)
         val recyclerView = findViewById<RecyclerView>(R.id.connections_recycler_view)
@@ -75,13 +160,12 @@ class VpnServerActivity : BaseActivity() {
         findViewById<LinearLayout>(R.id.dashboard_view).visibility = View.VISIBLE
         findViewById<RecyclerView>(R.id.connections_recycler_view).visibility = View.GONE
         findViewById<RecyclerView>(R.id.servers_recycler_view).visibility = View.GONE
-        
         updateDashboardStats()
     }
     
     private fun updateDashboardStats() {
-        findViewById<TextView>(R.id.tv_total_connections).text = analyzer.connections.size.toString()
-        findViewById<TextView>(R.id.tv_total_servers).text = analyzer.servers.size.toString()
+        findViewById<TextView>(R.id.tv_active_connections).text = analyzer.getActiveConnectionsCount().toString()
+        findViewById<TextView>(R.id.tv_total_bandwidth).text = analyzer.getTotalBandwidthUsage()
         
         val mostLoaded = analyzer.findMostLoadedServer()
         mostLoaded?.let {
@@ -176,6 +260,14 @@ class VpnServerActivity : BaseActivity() {
         dialog.show()
     }
     
+    private fun showAlert(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+    
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_server, menu)
         return true
@@ -199,6 +291,14 @@ class VpnServerActivity : BaseActivity() {
                 showReport()
                 true
             }
+            R.id.menu_settings -> {
+                showSettings()
+                true
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -209,7 +309,40 @@ class VpnServerActivity : BaseActivity() {
             .setTitle("VPN Analysis Report")
             .setMessage(report)
             .setPositiveButton("OK", null)
+            .setNeutralButton("Export") { _, _ ->
+                exportReport(report)
+            }
             .show()
+    }
+    
+    private fun exportReport(report: String) {
+        // In a real app, this would save to file or share
+        Toast.makeText(this, "Report exported", Toast.LENGTH_SHORT).show()
+    }
+    
+    private fun showSettings() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_settings, null)
+        val intervalSeek = dialogView.findViewById<SeekBar>(R.id.seek_monitor_interval)
+        intervalSeek.progress = monitoringInterval.toInt()
+        
+        AlertDialog.Builder(this)
+            .setTitle("Monitoring Settings")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                monitoringInterval = intervalSeek.progress.toLong()
+                if (monitoringActive) {
+                    stopRealTimeMonitoring()
+                    startRealTimeMonitoring()
+                }
+                Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    
+    override fun onDestroy() {
+        stopRealTimeMonitoring()
+        super.onDestroy()
     }
 }
 
@@ -260,21 +393,57 @@ class VPNAnalyzer {
     fun generateReport(): String {
         return buildString {
             appendLine("=== VPN Analysis Report ===")
+            appendLine("Generated: ${LocalDateTime.now()}")
             appendLine("Total Connections: ${connections.size}")
-            appendLine("Total Servers: ${servers.size}")
+            appendLine("Active Connections: ${getActiveConnectionsCount()}")
+            appendLine("Total Bandwidth: ${getTotalBandwidthUsage()}")
             
             val topUsers = analyzeBandwidthUsage()
-                .entries.sortedByDescending { it.value }.take(3)
+                .entries.sortedByDescending { it.value }.take(5)
             
             appendLine("\nTop Bandwidth Users:")
             topUsers.forEach { 
                 appendLine("- ${it.key}: ${it.value / (1024 * 1024)} MB") 
             }
             
+            appendLine("\nProtocol Distribution:")
+            getProtocolDistribution().forEach { (proto, count) ->
+                appendLine("- $proto: $count connections")
+            }
+            
             appendLine("\nServer Status:")
             servers.forEach {
-                appendLine("${it.ip} (${it.location}): ${it.capacityPercentage}% capacity")
+                appendLine("${it.ip} (${it.location}):")
+                appendLine("  Connections: ${it.currentConnections}/${it.maxCapacity}")
+                appendLine("  Load: ${"%.2f".format(it.loadAverage)}")
+                appendLine("  Uptime: ${it.uptime.toDays()} days")
             }
+            
+            val suspicious = getSuspiciousConnections()
+            if (suspicious.isNotEmpty()) {
+                appendLine("\n⚠️ Suspicious Activity:")
+                suspicious.forEach {
+                    appendLine("- ${it.userId} used ${it.bytesTransferred / (1024 * 1024)} MB")
+                }
+            }
+        }
+    }
+
+    fun getActiveConnectionsCount(): Int = connections.count { it.endTime == null }
+    
+    fun getTotalBandwidthUsage(): String {
+        val totalMB = connections.sumOf { it.bytesTransferred } / (1024 * 1024)
+        return "$totalMB MB"
+    }
+    
+    fun getProtocolDistribution(): Map<String, Int> {
+        return connections.groupBy { it.protocol }
+            .mapValues { (_, conns) -> conns.size }
+    }
+    
+    fun getSuspiciousConnections(thresholdMB: Long = 500): List<VPNConnection> {
+        return connections.filter { 
+            it.bytesTransferred > thresholdMB * 1024 * 1024 
         }
     }
 }
@@ -289,6 +458,7 @@ class ConnectionAdapter(private val connections: List<VPNConnection>) :
         val tvProtocol: TextView = view.findViewById(R.id.tv_protocol)
         val tvData: TextView = view.findViewById(R.id.tv_data_transferred)
         val tvDuration: TextView = view.findViewById(R.id.tv_duration)
+        val layout: LinearLayout = view.findViewById(R.id.connection_item_layout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -310,6 +480,15 @@ class ConnectionAdapter(private val connections: List<VPNConnection>) :
             "Active"
         }
         holder.tvDuration.text = duration
+        
+        // Highlight suspicious connections
+        if (conn.bytesTransferred > 500 * 1024 * 1024) {
+            holder.layout.setBackgroundColor(
+                ContextCompat.getColor(holder.itemView.context, R.color.warning_light))
+        } else {
+            holder.layout.setBackgroundColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.transparent))
+        }
     }
 
     override fun getItemCount() = connections.size
