@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Server IP"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/et_server_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/et_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Max Capacity"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/et_max_capacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Connections"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/et_current_connections"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Uptime (days)"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/et_uptime_days"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load Average (0.0-1.0)"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"/>
+
+    <EditText
+        android:id="@+id/et_load_average"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"/>
+</LinearLayout>

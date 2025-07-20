@@ -86,4 +86,11 @@
         <item>1</item>
     </string-array>
 
+    <string-array name="protocol_options">
+        <item>OpenVPN</item>
+        <item>WireGuard</item>
+        <item>IPSec</item>
+        <item>L2TP</item>
+        <item>PPTP</item>
+    </string-array>
 </resources>
