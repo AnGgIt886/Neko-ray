@@ -35,7 +35,7 @@ jobs:
           echo "Dependency updates in PR: ${{ github.event.pull_request.title }}"
 
       - name: Add Dependabot label
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             await github.rest.issues.addLabels({
