@@ -156,7 +156,7 @@ jobs:
         echo "sdk.dir=${ANDROID_HOME}" > local.properties
         chmod 755 gradlew
         chmod 755 build.sh
-        ./build.sh assembleRelease
+        ./build.sh assembleRelease --no-timestamp
 
     - name: arm64
       uses: actions/upload-artifact@v4
