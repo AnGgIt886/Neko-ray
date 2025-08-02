@@ -1,4 +1,4 @@
-package com.neko.v2ray.util
+package com.neko.v2ray.handler
 
 import android.content.Context
 import android.os.SystemClock
@@ -7,11 +7,12 @@ import com.neko.v2ray.AppConfig
 import com.neko.v2ray.dto.EConfigType
 import com.neko.v2ray.dto.ProfileItem
 import com.neko.v2ray.fmt.Hysteria2Fmt
-import com.neko.v2ray.handler.SpeedtestManager
 import com.neko.v2ray.service.ProcessService
+import com.neko.v2ray.util.JsonUtil
+import com.neko.v2ray.util.Utils
 import java.io.File
 
-object PluginUtil {
+object PluginServiceManager {
     private const val HYSTERIA2 = "libhysteria2.so"
 
     private val procService: ProcessService by lazy {

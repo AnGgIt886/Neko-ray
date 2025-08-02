@@ -9,10 +9,10 @@ import com.neko.v2ray.AppConfig.MSG_MEASURE_CONFIG_SUCCESS
 import com.neko.v2ray.dto.EConfigType
 import com.neko.v2ray.extension.serializable
 import com.neko.v2ray.handler.MmkvManager
+import com.neko.v2ray.handler.PluginServiceManager
 import com.neko.v2ray.handler.SpeedtestManager
 import com.neko.v2ray.handler.V2rayConfigManager
 import com.neko.v2ray.util.MessageUtil
-import com.neko.v2ray.util.PluginUtil
 import com.neko.v2ray.util.Utils
 import go.Seq
 import kotlinx.coroutines.CoroutineScope
@@ -78,7 +78,7 @@ class V2RayTestService : Service() {
 
         val config = MmkvManager.decodeServerConfig(guid) ?: return retFailure
         if (config.configType == EConfigType.HYSTERIA2) {
-            val delay = PluginUtil.realPingHy2(this, config)
+            val delay = PluginServiceManager.realPingHy2(this, config)
             return delay
         } else {
             val configResult = V2rayConfigManager.getV2rayConfig4Speedtest(this, guid)

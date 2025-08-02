@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import com.neko.v2ray.AppConfig
-import com.neko.v2ray.service.V2RayServiceManager
+import com.neko.v2ray.handler.V2RayServiceManager
 
 class TaskerReceiver : BroadcastReceiver() {
 

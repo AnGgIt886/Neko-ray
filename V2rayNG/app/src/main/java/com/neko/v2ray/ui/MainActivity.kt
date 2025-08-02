@@ -41,7 +41,7 @@ import com.neko.v2ray.handler.AngConfigManager
 import com.neko.v2ray.handler.MigrateManager
 import com.neko.v2ray.handler.MmkvManager
 import com.neko.v2ray.helper.SimpleItemTouchHelperCallback
-import com.neko.v2ray.service.V2RayServiceManager
+import com.neko.v2ray.handler.V2RayServiceManager
 import com.neko.v2ray.util.Utils
 import com.neko.v2ray.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers

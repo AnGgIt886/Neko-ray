@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.neko.v2ray.AppConfig
 import com.neko.v2ray.R
+import com.neko.v2ray.handler.V2RayServiceManager
 import com.neko.v2ray.util.MessageUtil
 import com.neko.v2ray.util.Utils
 import java.lang.ref.SoftReference

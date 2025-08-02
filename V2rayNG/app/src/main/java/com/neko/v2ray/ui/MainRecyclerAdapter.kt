@@ -27,7 +27,7 @@ import com.neko.v2ray.handler.AngConfigManager
 import com.neko.v2ray.handler.MmkvManager
 import com.neko.v2ray.helper.ItemTouchHelperAdapter
 import com.neko.v2ray.helper.ItemTouchHelperViewHolder
-import com.neko.v2ray.service.V2RayServiceManager
+import com.neko.v2ray.handler.V2RayServiceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

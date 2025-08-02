@@ -20,7 +20,9 @@ import com.neko.v2ray.AppConfig.LOOPBACK
 import com.neko.v2ray.AppConfig.VPN_MTU
 import com.neko.v2ray.BuildConfig
 import com.neko.v2ray.handler.MmkvManager
+import com.neko.v2ray.handler.NotificationManager
 import com.neko.v2ray.handler.SettingsManager
+import com.neko.v2ray.handler.V2RayServiceManager
 import com.neko.v2ray.util.MyContextWrapper
 import com.neko.v2ray.util.Utils
 import java.lang.ref.SoftReference
@@ -28,7 +30,7 @@ import java.lang.ref.SoftReference
 class V2RayVpnService : VpnService(), ServiceControl {
     private lateinit var mInterface: ParcelFileDescriptor
     private var isRunning = false
-    private var tun2SocksManager: Tun2SocksManager? = null
+    private var tun2SocksService: Tun2SocksService? = null
 
     /**destroy
      * Unfortunately registerDefaultNetworkCallback is going to return our VPN interface: https://android.googlesource.com/platform/frameworks/base/+/dda156ab0c5d66ad82bdcf76cda07cbc0a9c8a2e
@@ -85,7 +87,7 @@ class V2RayVpnService : VpnService(), ServiceControl {
 
     override fun onDestroy() {
         super.onDestroy()
-        NotificationService.cancelNotification()
+        NotificationManager.cancelNotification()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -271,7 +273,7 @@ class V2RayVpnService : VpnService(), ServiceControl {
      * Starts the tun2socks process with the appropriate parameters.
      */
     private fun runTun2socks() {
-        tun2SocksManager = Tun2SocksManager(
+        tun2SocksService = Tun2SocksService(
             context = applicationContext,
             vpnInterface = mInterface,
             isRunningProvider = { isRunning },
@@ -299,8 +301,8 @@ class V2RayVpnService : VpnService(), ServiceControl {
             }
         }
 
-        tun2SocksManager?.stopTun2Socks()
-        tun2SocksManager = null
+        tun2SocksService?.stopTun2Socks()
+        tun2SocksService = null
 
         V2RayServiceManager.stopCoreLoop()
 
@@ -320,3 +322,4 @@ class V2RayVpnService : VpnService(), ServiceControl {
         }
     }
 }
+

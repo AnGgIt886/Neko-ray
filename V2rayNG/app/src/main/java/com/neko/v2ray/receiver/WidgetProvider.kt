@@ -10,7 +10,7 @@ import android.os.Build
 import android.widget.RemoteViews
 import com.neko.v2ray.AppConfig
 import com.neko.v2ray.R
-import com.neko.v2ray.service.V2RayServiceManager
+import com.neko.v2ray.handler.V2RayServiceManager
 
 class WidgetProvider : AppWidgetProvider() {
     /**

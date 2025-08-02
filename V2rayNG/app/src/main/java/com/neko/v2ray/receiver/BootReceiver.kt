@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.neko.v2ray.handler.MmkvManager
-import com.neko.v2ray.service.V2RayServiceManager
+import com.neko.v2ray.handler.V2RayServiceManager
 
 class BootReceiver : BroadcastReceiver() {
     /**

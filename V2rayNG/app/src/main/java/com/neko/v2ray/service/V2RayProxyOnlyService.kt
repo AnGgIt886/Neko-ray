@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import com.neko.v2ray.handler.SettingsManager
+import com.neko.v2ray.handler.V2RayServiceManager
 import com.neko.v2ray.util.MyContextWrapper
 import java.lang.ref.SoftReference
 
