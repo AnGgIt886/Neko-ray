@@ -13,7 +13,7 @@ on:
 env:
   ANDROID_SDK_VERSION: '35'
   BUILD_TOOLS_VERSION: '35.0.0'
-  NDK_VERSION: '29.0.13599879'
+  NDK_VERSION: '28.2.13676358'
   CMDLINE_TOOLS_VERSION: '12266719'
 
 jobs:
@@ -74,13 +74,12 @@ jobs:
         id: setup-ndk
         run: |
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
-            --channel=3 \
+            --channel=0 \
             --install "ndk;${{ env.NDK_VERSION }}"
-          echo "NDK_HOME=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" >> $GITHUB_ENV
-          echo "ndk-home=$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}" >> $GITHUB_OUTPUT
-          sed -i '18i\
-          \
-              ndkVersion = "${{ env.NDK_VERSION }}"' ${{ github.workspace }}/V2rayNG/app/build.gradle.kts
+          NDK_PATH="$ANDROID_HOME/ndk/${{ env.NDK_VERSION }}"
+          echo "NDK_HOME=$NDK_PATH" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$NDK_PATH" >> $GITHUB_ENV
+          echo "ndk-home=$NDK_PATH" >> $GITHUB_OUTPUT
 
       - name: Fetch AndroidLibXrayLite tag
         id: fetch-xray-tag
@@ -95,6 +94,9 @@ jobs:
   build-dependencies:
     needs: setup-environment
     runs-on: ubuntu-latest
+    env:
+      NDK_HOME: ${{ needs.setup-environment.outputs.ndk-home }}
+      ANDROID_NDK_HOME: ${{ needs.setup-environment.outputs.ndk-home }}
 
     steps:
       - name: Checkout repository
@@ -108,7 +110,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/libs
-          key: libtun2socks-${{ runner.os }}-${{ needs.setup-environment.outputs.ndk-home }}-${{ hashFiles('.git/modules/badvpn/HEAD') }}-${{ hashFiles('.git/modules/libancillary/HEAD') }}
+          key: libtun2socks-${{ runner.os }}-${{ needs.setup-environment.outputs.ndk-home }}-${{ hashFiles('.git/modules/hev-socks5-tunnel/HEAD') }}-${{ hashFiles('.git/modules/badvpn/HEAD') }}-${{ hashFiles('.git/modules/libancillary/HEAD') }}
 
       - name: Build libtun2socks
         if: steps.cache-libtun2socks.outputs.cache-hit != 'true'
@@ -169,6 +171,9 @@ jobs:
   build-apk:
     needs: [setup-environment, build-dependencies]
     runs-on: ubuntu-latest
+    env:
+      NDK_HOME: ${{ needs.setup-environment.outputs.ndk-home }}
+      ANDROID_NDK_HOME: ${{ needs.setup-environment.outputs.ndk-home }}
 
     steps:
       - name: Checkout repository
@@ -176,6 +181,15 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 0
+
+      - name: Verify NDK
+        run: |
+          echo "NDK_HOME: $NDK_HOME"
+          echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
+          ls -la $NDK_HOME || echo "NDK not found"
+          sed -i '18i\
+          \
+              ndkVersion = "${{ env.NDK_VERSION }}"' ${{ github.workspace }}/V2rayNG/app/build.gradle.kts
 
       - name: Download dependencies artifact
         uses: actions/download-artifact@v4
