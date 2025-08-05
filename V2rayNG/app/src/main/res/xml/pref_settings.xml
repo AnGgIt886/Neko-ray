@@ -30,10 +30,19 @@
             android:defaultValue="false"
             android:key="pref_is_booted"
             android:icon="@drawable/uwu_ic_autobot"
-            android:layout="@layout/uwu_bot_switch"
+            android:layout="@layout/uwu_mid_switch"
             android:summary="@string/summary_pref_is_booted"
             android:widgetLayout="@layout/uwu_switch"
             android:title="@string/title_pref_is_booted" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_use_hev_tunnel"
+            android:icon="@drawable/uwu_ic_hev_tunnel"
+            android:layout="@layout/uwu_bot_switch"
+            android:widgetLayout="@layout/uwu_switch"
+            android:summary="@string/summary_pref_use_hev_tunnel"
+            android:title="@string/title_pref_use_hev_tunnel" />
 
     </PreferenceCategory>
 
@@ -349,20 +358,12 @@
         <ListPreference
             android:icon="@drawable/uwu_ic_key_outline"
             android:defaultValue="VPN"
-            android:layout="@layout/uwu_mid"
+            android:layout="@layout/uwu_bot"
             android:entries="@array/mode_entries"
             android:entryValues="@array/mode_value"
             android:key="pref_mode"
             android:summary="%s"
             android:title="@string/title_mode"/>
-
-        <CheckBoxPreference
-            android:key="pref_use_hev_tunnel"
-            android:icon="@drawable/uwu_ic_hev_tunnel"
-            android:layout="@layout/uwu_bot_switch"
-            android:widgetLayout="@layout/uwu_switch"
-            android:summary="@string/summary_pref_use_hev_tunnel"
-            android:title="@string/title_pref_use_hev_tunnel" />
 
     </PreferenceCategory>
 
