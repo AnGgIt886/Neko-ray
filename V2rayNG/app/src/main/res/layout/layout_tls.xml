@@ -184,7 +184,7 @@
             android:hint="@string/server_lab_mldsa65_verify"
             style="@style/Outline_TextInputLayout">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_mldsa65_v"
+                android:id="@+id/et_mldsa65_verify"
                 android:nextFocusDown="@+id/sp_stream_fingerprint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
