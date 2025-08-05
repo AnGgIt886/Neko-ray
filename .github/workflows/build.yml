@@ -197,6 +197,14 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
+      - name: Copy libtun2socks
+        run: |
+          cp -r ${{ github.workspace }}/libs ${{ github.workspace }}/V2rayNG/app
+
+      - name: Copy libhysteria2
+        run: |
+          cp -r ${{ github.workspace }}/hysteria/libs ${{ github.workspace }}/V2rayNG/app
+
       - name: Build APK
         run: |
           cd ${{ github.workspace }}/V2rayNG
@@ -209,8 +217,40 @@ jobs:
         if: github.event.inputs.release_tag == ''
         uses: actions/upload-artifact@v4
         with:
-          name: built-apks
-          path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*.apk
+          name: arm64-v8a
+          path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*arm64-v8a.apk
+          retention-days: 7
+
+      - name: Upload APK artifacts
+        if: github.event.inputs.release_tag == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: armeabi-v7a
+          path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*armeabi-v7a.apk
+          retention-days: 7
+
+      - name: Upload APK artifacts
+        if: github.event.inputs.release_tag == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: x86
+          path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*x86.apk
+          retention-days: 7
+
+      - name: Upload APK artifacts
+        if: github.event.inputs.release_tag == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: x86_64
+          path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*x86_64.apk
+          retention-days: 7
+
+      - name: Upload APK artifacts
+        if: github.event.inputs.release_tag == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: universal
+          path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*universal.apk
           retention-days: 7
 
       - name: Prepare release assets
