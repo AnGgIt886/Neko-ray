@@ -59,7 +59,7 @@
         <item>6</item>
     </string-array>
 
-    <string-array name="vpn_interface_address">
+    <string-array name="vpn_interface_address" translatable="false">
         <item>10.10.14.x</item>
         <item>10.1.0.x</item>
         <item>10.0.0.x</item>
@@ -84,6 +84,62 @@
     <string-array name="intelligent_selection_method_value" translatable="false">
         <item>0</item>
         <item>1</item>
+    </string-array>
+
+        <string-array name="contrast_level_entries">
+        <item>Default</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="contrast_level_values" translatable="false">
+        <item>DEFAULT</item>
+        <item>MEDIUM</item>
+        <item>HIGH</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Follow system</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="dark_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="font_names" translatable="false">
+        <item>Default</item>
+        <item>Roboto</item>
+        <item>Lato</item>
+        <item>Wintering</item>
+        <item>Stencil</item>
+        <item>Poppins</item>
+        <item>Mistery</item>
+        <item>Dreamhour</item>
+        <item>Grunell</item>
+        <item>Shirouga</item>
+        <item>Bubblez</item>
+        <item>Japan</item>
+        <item>OnePiece</item>
+    </string-array>
+
+    <string-array name="font_values" translatable="false">
+        <item>DEFAULT</item>
+        <item>ROBOTO</item>
+        <item>LATO</item>
+        <item>WINTERING</item>
+        <item>STENCIL</item>
+        <item>POPPINS</item>
+        <item>MISTERY</item>
+        <item>DREAMHOUR</item>
+        <item>GRUNELL</item>
+        <item>SHIROUGA</item>
+        <item>BUBBLEZ</item>
+        <item>JAPAN</item>
+        <item>ONEPIECE</item>
     </string-array>
 
 </resources>

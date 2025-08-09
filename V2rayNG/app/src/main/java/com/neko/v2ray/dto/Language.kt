@@ -3,6 +3,7 @@ package com.neko.v2ray.dto
 enum class Language(val code: String) {
     AUTO("auto"),
     ENGLISH("en"),
+    INDONESIAN("id"),
     CHINA("zh-rCN"),
     TRADITIONAL_CHINESE("zh-rTW"),
     VIETNAMESE("vi"),

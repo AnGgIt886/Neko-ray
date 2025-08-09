@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mux_xudp_quic_entries">
+        <item>tolak</item>
+        <item>izinkan</item>
+        <item>lewati</item>
+    </string-array>
+
+    <string-array name="share_method">
+        <item>QRcode</item>
+        <item>Ekspor ke clipboard</item>
+        <item>Ekspor konfigurasi lengkap ke clipboard</item>
+    </string-array>
+
+    <string-array name="share_method_more">
+         <item>QRcode</item>
+         <item>Ekspor ke clipboard</item>
+         <item>Ekspor konfigurasi lengkap ke clipboard</item>
+         <item>Edit</item>
+         <item>Hapus</item>
+     </string-array>
+
+    <string-array name="share_sub_method">
+        <item>QRcode</item>
+        <item>Ekspor ke clipboard</item>
+    </string-array>
+
+    <string-array name="mode_entries">
+        <item>VPN</item>
+        <item>Hanya proxy</item>
+    </string-array>
+
+    <string-array name="vpn_bypass_lan">
+        <item>Ikuti konfigurasi</item>
+        <item>Bypass</item>
+        <item>Tidak bypass</item>
+    </string-array>
+
+    <string-array name="preset_rulesets">
+        <item>Daftar Putih China</item>
+        <item>Daftar Hitam China</item>
+        <item>Global</item>
+        <item>Daftar Putih Iran</item>
+    </string-array>
+
+    <string-array name="outbound_domain_resolve_method">
+        <item>Jangan resolve</item>
+        <item>Resolve dan tambahkan ke Host DNS</item>
+        <item>Resolve dan ganti domain</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>Default</item>
+        <item>Sedang</item>
+        <item>Tinggi</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Ikuti sistem</item>
+        <item>Terang</item>
+        <item>Gelap</item>
+    </string-array>
+</resources>
