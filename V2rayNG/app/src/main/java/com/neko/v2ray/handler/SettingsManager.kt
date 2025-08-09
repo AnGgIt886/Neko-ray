@@ -259,6 +259,7 @@ object SettingsManager {
         return when (language) {
             Language.AUTO -> Utils.getSysLocale()
             Language.ENGLISH -> Locale.ENGLISH
+            Language.INDONESIA -> Locale("in")
             Language.CHINA -> Locale.CHINA
             Language.TRADITIONAL_CHINESE -> Locale.TRADITIONAL_CHINESE
             Language.VIETNAMESE -> Locale("vi")
