@@ -342,6 +342,22 @@ class AppUpdater(private val context: Context) {
         }
     }
 
+    fun checkForUpdateInBackground(showNotification: Boolean = true) {
+        if (configUrl.isEmpty()) {
+            Log.e(TAG, "Config URL is not set")
+            return
+        }
+    
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = fetchUpdate(configUrl)
+            result?.let {
+                if (it.updateAvailable && showNotification) {
+                    showNotificationForUpdate(it)
+                }
+            }
+        }
+    }
+
     private fun showNoUpdateDialog() {
         val message = context.getString(
             R.string.appupdater_update_not_available_description,
