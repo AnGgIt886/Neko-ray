@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import androidx.lifecycle.lifecycleScope
@@ -91,6 +92,7 @@ class SubSettingActivity : BaseActivity() {
                         toastError(R.string.toast_failure)
                     }
                     binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = GONE
                 }
             }
 

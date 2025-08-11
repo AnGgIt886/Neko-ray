@@ -48,48 +48,52 @@
     </com.google.android.material.appbar.AppBarLayout>
     <FrameLayout
         android:background="@drawable/uwu_background_lengkung"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <androidx.cardview.widget.CardView
             android:paddingTop="16.0dip"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="16.0dip"
             android:layout_marginBottom="0.0dip"
             android:layout_marginStart="16.0dip"
             android:layout_marginEnd="16.0dip"
             app:cardBackgroundColor="#00000000"
-            app:cardCornerRadius="28.0dip"
+            app:cardCornerRadius="14.0dip"
             app:cardElevation="0.0dip">
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/pb_waiting"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="0.0dip"
-                android:paddingBottom="0.0dip"
-                android:paddingStart="8.0dip"
-                android:paddingEnd="8.0dip"
-                android:layout_marginStart="20.0dip"
-                android:layout_marginEnd="20.0dip"
-                android:indeterminate="true"
-                android:visibility="invisible"
-                app:indicatorColor="?attr/colorThemeUwu" />
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:fillViewport="true"
-                android:layout_marginStart="-16.0dip"
-                android:layout_marginEnd="-16.0dip"
+                android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view"
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/pb_waiting"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0.0dip"
+                    android:layout_marginBottom="8.0dip"
+                    android:indeterminate="true"
+                    android:layout_marginStart="16.0dip"
+                    android:layout_marginEnd="16.0dip"
+                    app:indicatorColor="?attr/colorThemeUwu" />
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="0.0dip"
-                    android:layout_marginBottom="0.0dip"
-                    tools:listitem="@layout/item_recycler_sub_setting" />
-            </androidx.core.widget.NestedScrollView>
+                    android:fillViewport="true"
+                    android:layout_marginStart="-16.0dip"
+                    android:layout_marginEnd="-16.0dip"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="0.0dip"
+                        android:layout_marginBottom="0.0dip"
+                        tools:listitem="@layout/item_recycler_sub_setting" />
+                </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

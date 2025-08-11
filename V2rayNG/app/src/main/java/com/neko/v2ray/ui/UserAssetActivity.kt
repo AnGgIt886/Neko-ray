@@ -256,6 +256,7 @@ class UserAssetActivity : BaseActivity() {
                     toast(getString(R.string.toast_failure))
                 }
                 binding.pbWaiting.hide()
+                binding.pbWaiting.visibility = GONE
             }
         }
     }

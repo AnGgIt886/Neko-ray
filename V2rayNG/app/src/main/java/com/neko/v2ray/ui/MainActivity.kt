@@ -607,11 +607,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         else -> toastError(R.string.toast_failure)
                     }
                     binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = View.GONE
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     toastError(R.string.toast_failure)
                     binding.pbWaiting.hide()
+                    binding.pbWaiting.visibility = View.GONE
                 }
                 Log.e(AppConfig.TAG, "Failed to import batch config", e)
             }
@@ -649,6 +651,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     toastError(R.string.toast_failure)
                 }
                 binding.pbWaiting.hide()
+                binding.pbWaiting.visibility = View.GONE
             }
         }
         return true
@@ -664,6 +667,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 else
                     toastError(R.string.toast_failure)
                 binding.pbWaiting.hide()
+                binding.pbWaiting.visibility = View.GONE
             }
         }
     }
@@ -678,6 +682,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         mainViewModel.reloadServerList()
                         toast(getString(R.string.title_del_config_count, ret))
                         binding.pbWaiting.hide()
+                        binding.pbWaiting.visibility = View.GONE
                     }
                 }
             }
@@ -697,6 +702,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         mainViewModel.reloadServerList()
                         toast(getString(R.string.title_del_duplicate_config_count, ret))
                         binding.pbWaiting.hide()
+                        binding.pbWaiting.visibility = View.GONE
                     }
                 }
             }
@@ -716,6 +722,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         mainViewModel.reloadServerList()
                         toast(getString(R.string.title_del_config_count, ret))
                         binding.pbWaiting.hide()
+                        binding.pbWaiting.visibility = View.GONE
                     }
                 }
             }
@@ -732,6 +739,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             launch(Dispatchers.Main) {
                 mainViewModel.reloadServerList()
                 binding.pbWaiting.hide()
+                binding.pbWaiting.visibility = View.GONE
             }
         }
     }
