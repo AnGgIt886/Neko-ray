@@ -6,7 +6,6 @@ import android.net.LocalSocketAddress
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import com.neko.v2ray.AppConfig
-import com.neko.v2ray.AppConfig.VPN_MTU
 import com.neko.v2ray.handler.MmkvManager
 import com.neko.v2ray.handler.SettingsManager
 import com.neko.v2ray.util.Utils
@@ -42,7 +41,7 @@ class Tun2SocksService(
             "--netif-ipaddr", vpnConfig.ipv4Router,
             "--netif-netmask", "255.255.255.252",
             "--socks-server-addr", "${AppConfig.LOOPBACK}:${socksPort}",
-            "--tunmtu", VPN_MTU.toString(),
+            "--tunmtu", SettingsManager.getVpnMtu().toString(),
             "--sock-path", "sock_path",
             "--enable-udprelay",
             "--loglevel", "notice"

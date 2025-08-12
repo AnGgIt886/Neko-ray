@@ -179,6 +179,7 @@
     <string name="title_pref_vpn_bypass_lan">Apakah VPN melewati LAN</string>
 
     <string name="title_pref_vpn_interface_address">Alamat Antarmuka VPN</string>
+    <string name="title_pref_vpn_mtu">VPN MTU (default 1500)</string>
 
     <string name="title_pref_domestic_dns">DNS domestik (Opsional)</string>
     <string name="summary_pref_domestic_dns">DNS</string>

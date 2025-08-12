@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import com.neko.v2ray.AppConfig
-import com.neko.v2ray.AppConfig.VPN_MTU
 import com.neko.v2ray.handler.MmkvManager
 import com.neko.v2ray.handler.SettingsManager
 import java.io.File
@@ -60,7 +59,7 @@ class TProxyService(
         val vpnConfig = SettingsManager.getCurrentVpnInterfaceAddressConfig()
         return buildString {
             appendLine("tunnel:")
-            appendLine("  mtu: $VPN_MTU")
+            appendLine("  mtu: ${SettingsManager.getVpnMtu()}")
             appendLine("  ipv4: ${vpnConfig.ipv4Client}")
 
             if (MmkvManager.decodeSettingsBool(AppConfig.PREF_PREFER_IPV6) == true) {

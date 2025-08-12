@@ -177,6 +177,7 @@
     <string name="title_pref_vpn_bypass_lan">آیا VPN از شبکه محلی عبور می کند؟</string>
 
     <string name="title_pref_vpn_interface_address">VPN Interface Address</string>
+    <string name="title_pref_vpn_mtu">VPN MTU (default 1500)</string>
 
     <string name="title_pref_domestic_dns">DNS داخلی (اختیاری)</string>
     <string name="summary_pref_domestic_dns">DNS</string>

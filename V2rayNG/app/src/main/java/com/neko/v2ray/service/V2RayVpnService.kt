@@ -17,7 +17,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.neko.v2ray.AppConfig
 import com.neko.v2ray.AppConfig.LOOPBACK
-import com.neko.v2ray.AppConfig.VPN_MTU
 import com.neko.v2ray.BuildConfig
 import com.neko.v2ray.handler.MmkvManager
 import com.neko.v2ray.handler.NotificationManager
@@ -185,7 +184,7 @@ class V2RayVpnService : VpnService(), ServiceControl {
         val bypassLan = SettingsManager.routingRulesetsBypassLan()
 
         // Configure IPv4 settings
-        builder.setMtu(VPN_MTU)
+        builder.setMtu(SettingsManager.getVpnMtu())
         builder.addAddress(vpnConfig.ipv4Client, 30)
 
         // Configure routing rules

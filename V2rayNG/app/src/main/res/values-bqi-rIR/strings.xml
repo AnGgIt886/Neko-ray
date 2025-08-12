@@ -179,6 +179,7 @@
     <string name="title_pref_vpn_bypass_lan">VPN ز شبکه مهلی اگوڌرته؟</string>
 
     <string name="title_pref_vpn_interface_address">VPN Interface Address</string>
+    <string name="title_pref_vpn_mtu">VPN MTU (default 1500)</string>
 
     <string name="title_pref_domestic_dns">DNS منی (اختیاری)</string>
     <string name="summary_pref_domestic_dns">DNS</string>
