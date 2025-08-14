@@ -333,10 +333,7 @@
     <string name="intelligent_selection">Pemilihan Cerdas</string>
     <string name="sub_setting_intelligent_selection_filter">Filter keterangan Pemilihan Cerdas reguler</string>
     <string name="title_intelligent_selection_method">Metode Pemilihan Cerdas</string>
-    <string-array name="intelligent_selection_method">
-        <item>Ping Terkecil</item>
-        <item>Beban Terkecil</item>
-    </string-array>
+    <string name="pre_resolving_domain">Pra-resolusi domain…</string>
 
     <!-- Neko strings -->
     <string name="title_theme_settings">Pengaturan Tema</string>

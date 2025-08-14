@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string
-        name="app_name"
-        translatable="false">Neko-ray</string>
+    <string name="app_name" translatable="false">Neko-ray</string>
     <string name="app_widget_name">Switch</string>
     <string name="app_tile_name">Switch</string>
     <string name="app_tile_first_use">First use of this feature, please use the app to add server</string>
@@ -67,9 +65,7 @@
     <string name="server_lab_path_kcp">kcp seed</string>
     <string name="server_lab_path_grpc">gRPC serviceName</string>
     <string name="server_lab_stream_security">TLS</string>
-    <string
-        name="server_lab_stream_fingerprint"
-        translatable="false">Fingerprint</string>
+    <string name="server_lab_stream_fingerprint" translatable="false">Fingerprint</string>
     <string name="server_lab_stream_alpn">Alpn</string>
     <string name="server_lab_allow_insecure">allowInsecure</string>
     <string name="server_lab_sni">SNI</string>
@@ -303,30 +299,14 @@
     <string name="routing_settings_import_rulesets_from_qrcode">Import ruleset from QRcode</string>
     <string name="routing_settings_export_rulesets_to_clipboard">Export ruleset to clipboard</string>
     <string name="routing_settings_locked">Locked, keep this rule when import presets</string>
-    <string
-        name="routing_settings_domain"
-        translatable="false">domain</string>
-    <string
-        name="routing_settings_ip"
-        translatable="false">ip</string>
-    <string
-        name="routing_settings_port"
-        translatable="false">port</string>
-    <string
-        name="routing_settings_protocol"
-        translatable="false">protocol</string>
-    <string
-        name="routing_settings_protocol_tip"
-        translatable="false">[http,tls,bittorrent]</string>
-    <string
-        name="routing_settings_network"
-        translatable="false">network</string>
-    <string
-        name="routing_settings_network_tip"
-        translatable="false">[udp|tcp]</string>
-    <string
-        name="routing_settings_outbound_tag"
-        translatable="false">outboundTag</string>
+    <string name="routing_settings_domain" translatable="false">domain</string>
+    <string name="routing_settings_ip" translatable="false">ip</string>
+    <string name="routing_settings_port" translatable="false">port</string>
+    <string name="routing_settings_protocol" translatable="false">protocol</string>
+    <string name="routing_settings_protocol_tip" translatable="false">[http,tls,bittorrent]</string>
+    <string name="routing_settings_network" translatable="false">network</string>
+    <string name="routing_settings_network_tip" translatable="false">[udp|tcp]</string>
+    <string name="routing_settings_outbound_tag" translatable="false">outboundTag</string>
 
     <string name="connection_test_pending">Check Connectivity</string>
     <string name="connection_test_testing">Testing…</string>
@@ -518,5 +498,4 @@
     <string name="uwu_support_title">Support Neko-Ray</string>
     <string name="uwu_support_summary">Give a little donation to the Neko-Ray developers</string>
     <string name="font_size">Font size</string>
-    <!-- Neko strings -->
 </resources>
