@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mux_xudp_quic_entries">
-        <item>отклонять</item>
-        <item>разрешать</item>
-        <item>пропускать</item>
+        <item>Отклонить</item>
+        <item>Разрешить</item>
+        <item>Пропустить</item>
     </string-array>
 
     <string-array name="share_method">
         <item>QR-код</item>
         <item>Экспорт в буфер обмена</item>
-        <item>Экспорт всей конфигурации в буфер обмена</item>
+        <item>Экспорт полной конфигурации в буфер обмена</item>
     </string-array>
 
     <string-array name="share_method_more">
         <item>QR-код</item>
         <item>Экспорт в буфер обмена</item>
-        <item>Экспорт всей конфигурации в буфер обмена</item>
-        <item>Изменить</item>
+        <item>Экспорт полной конфигурации в буфер обмена</item>
+        <item>Редактировать</item>
         <item>Удалить</item>
     </string-array>
 
@@ -27,25 +27,42 @@
 
     <string-array name="mode_entries">
         <item>VPN</item>
-        <item>Прокси</item>
+        <item>Только прокси</item>
+    </string-array>
+
+    <string-array name="vpn_bypass_lan">
+        <item>Следовать конфигурации</item>
+        <item>Обход</item>
+        <item>Не обходить</item>
     </string-array>
 
     <string-array name="preset_rulesets">
         <item>Белый список Китая</item>
         <item>Чёрный список Китая</item>
-        <item>Общие</item>
+        <item>Глобальный</item>
         <item>Белый список Ирана</item>
     </string-array>
 
-    <string-array name="vpn_bypass_lan">
-        <item>Как в профиле</item>
-        <item>Пропускает</item>
-        <item>Не пропускает</item>
-    </string-array>
-    
     <string-array name="outbound_domain_resolve_method">
-        <item>Do not resolve</item>
-        <item>Resolve and add to DNS Hosts</item>
-        <item>Resolve and replace domain</item>
+        <item>Не разрешать</item>
+        <item>Разрешить и добавить в DNS хосты</item>
+        <item>Разрешить и заменить домен</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>Наименьший пинг</item>
+        <item>Наименьшая нагрузка</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>По умолчанию</item>
+        <item>Средний</item>
+        <item>Высокий</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Следовать системе</item>
+        <item>Светлый</item>
+        <item>Тёмный</item>
     </string-array>
 </resources>

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mux_xudp_quic_entries">
-        <item>tolak</item>
-        <item>izinkan</item>
-        <item>lewati</item>
+        <item>Tolak</item>
+        <item>Izinkan</item>
+        <item>Lewati</item>
     </string-array>
 
     <string-array name="share_method">
-        <item>QRcode</item>
+        <item>Kode QR</item>
         <item>Ekspor ke clipboard</item>
         <item>Ekspor konfigurasi lengkap ke clipboard</item>
     </string-array>
 
     <string-array name="share_method_more">
-         <item>QRcode</item>
-         <item>Ekspor ke clipboard</item>
-         <item>Ekspor konfigurasi lengkap ke clipboard</item>
-         <item>Edit</item>
-         <item>Hapus</item>
-     </string-array>
+        <item>Kode QR</item>
+        <item>Ekspor ke clipboard</item>
+        <item>Ekspor konfigurasi lengkap ke clipboard</item>
+        <item>Edit</item>
+        <item>Hapus</item>
+    </string-array>
 
     <string-array name="share_sub_method">
-        <item>QRcode</item>
+        <item>Kode QR</item>
         <item>Ekspor ke clipboard</item>
     </string-array>
 
@@ -37,21 +37,21 @@
     </string-array>
 
     <string-array name="preset_rulesets">
-        <item>Daftar Putih China</item>
-        <item>Daftar Hitam China</item>
+        <item>Whitelist China</item>
+        <item>Blacklist China</item>
         <item>Global</item>
-        <item>Daftar Putih Iran</item>
+        <item>Whitelist Iran</item>
     </string-array>
 
     <string-array name="outbound_domain_resolve_method">
-        <item>Jangan resolve</item>
-        <item>Resolve dan tambahkan ke Host DNS</item>
-        <item>Resolve dan ganti domain</item>
+        <item>Tidak menyelesaikan</item>
+        <item>Selesaikan dan tambahkan ke DNS Hosts</item>
+        <item>Selesaikan dan ganti domain</item>
     </string-array>
 
     <string-array name="intelligent_selection_method">
-        <item>Ping Terkecil</item>
-        <item>Beban Terkecil</item>
+        <item>Ping terendah</item>
+        <item>Beban terendah</item>
     </string-array>
 
     <string-array name="contrast_level_entries">

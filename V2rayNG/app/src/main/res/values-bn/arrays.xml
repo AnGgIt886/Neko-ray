@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mux_xudp_quic_entries">
-        <item>অস্বীকার করুন</item>
-        <item>অনুমতি দিন</item>
+        <item>প্রত্যাখ্যান</item>
+        <item>অনুমতি</item>
         <item>এড়িয়ে যান</item>
     </string-array>
 
     <string-array name="share_method">
         <item>QR কোড</item>
-        <item>ক্লিপবোর্ডে রপ্তানি করুন</item>
-        <item>পূর্ণ কনফিগারেশন ক্লিপবোর্ডে রপ্তানি করুন</item>
+        <item>ক্লিপবোর্ডে রপ্তানি</item>
+        <item>সম্পূর্ণ কনফিগারেশন ক্লিপবোর্ডে রপ্তানি</item>
     </string-array>
 
     <string-array name="share_method_more">
-         <item>QRcode</item>
-         <item>Export to clipboard</item>
-         <item>Export full configuration to clipboard</item>
-         <item>Edit</item>
-         <item>Delete</item>
-     </string-array>
+        <item>QR কোড</item>
+        <item>ক্লিপবোর্ডে রপ্তানি</item>
+        <item>সম্পূর্ণ কনফিগারেশন ক্লিপবোর্ডে রপ্তানি</item>
+        <item>সম্পাদনা</item>
+        <item>মুছে ফেলা</item>
+    </string-array>
 
     <string-array name="share_sub_method">
         <item>QR কোড</item>
-        <item>ক্লিপবোর্ডে রপ্তানি করুন</item>
+        <item>ক্লিপবোর্ডে রপ্তানি</item>
     </string-array>
 
     <string-array name="mode_entries">
         <item>VPN</item>
-        <item>শুধুমাত্র প্রোক্সি</item>
+        <item>প্রক্সি শুধুমাত্র</item>
+    </string-array>
+
+    <string-array name="vpn_bypass_lan">
+        <item>কনফিগ অনুসরণ করুন</item>
+        <item>বাইপাস</item>
+        <item>বাইপাস না</item>
     </string-array>
 
     <string-array name="preset_rulesets">
@@ -37,15 +43,26 @@
         <item>ইরান হোয়াইটলিস্ট</item>
     </string-array>
 
-    <string-array name="vpn_bypass_lan">
-        <item>Follow config</item>
-        <item>Bypass</item>
-        <item>Not Bypass</item>
-    </string-array>
-    
     <string-array name="outbound_domain_resolve_method">
-        <item>Do not resolve</item>
-        <item>Resolve and add to DNS Hosts</item>
-        <item>Resolve and replace domain</item>
+        <item>রিজল্ভ করবেন না</item>
+        <item>রিজল্ভ করে DNS হোস্টে যোগ করুন</item>
+        <item>রিজল্ভ করে ডোমেইন প্রতিস্থাপন করুন</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>সর্বনিম্ন পিং</item>
+        <item>সর্বনিম্ন লোড</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>ডিফল্ট</item>
+        <item>মধ্যম</item>
+        <item>উচ্চ</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>সিস্টেম অনুসরণ করুন</item>
+        <item>হালকা</item>
+        <item>গাঢ়</item>
     </string-array>
 </resources>

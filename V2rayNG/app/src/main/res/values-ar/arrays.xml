@@ -2,32 +2,38 @@
 <resources>
     <string-array name="mux_xudp_quic_entries">
         <item>رفض</item>
-        <item>سماح</item>
+        <item>السماح</item>
         <item>تخطي</item>
     </string-array>
 
     <string-array name="share_method">
-        <item>رمز استجابة سريعة (QRcode)</item>
+        <item>رمز QR</item>
         <item>تصدير إلى الحافظة</item>
-        <item>تصدير التكوين الكامل إلى الحافظة</item>
+        <item>تصدير الإعدادات الكاملة إلى الحافظة</item>
     </string-array>
 
     <string-array name="share_method_more">
-         <item>QRcode</item>
-         <item>Export to clipboard</item>
-         <item>Export full configuration to clipboard</item>
-         <item>Edit</item>
-         <item>Delete</item>
-     </string-array>
+        <item>رمز QR</item>
+        <item>تصدير إلى الحافظة</item>
+        <item>تصدير الإعدادات الكاملة إلى الحافظة</item>
+        <item>تعديل</item>
+        <item>حذف</item>
+    </string-array>
 
     <string-array name="share_sub_method">
-        <item>رمز استجابة سريعة (QRcode)</item>
+        <item>رمز QR</item>
         <item>تصدير إلى الحافظة</item>
     </string-array>
 
     <string-array name="mode_entries">
         <item>VPN</item>
-        <item>بروكسي فقط</item>
+        <item>وكيل فقط</item>
+    </string-array>
+
+    <string-array name="vpn_bypass_lan">
+        <item>اتباع الإعدادات</item>
+        <item>تجاوز</item>
+        <item>عدم التجاوز</item>
     </string-array>
 
     <string-array name="preset_rulesets">
@@ -37,15 +43,26 @@
         <item>القائمة البيضاء لإيران</item>
     </string-array>
 
-    <string-array name="vpn_bypass_lan">
-        <item>Follow config</item>
-        <item>Bypass</item>
-        <item>Not Bypass</item>
-    </string-array>
-    
     <string-array name="outbound_domain_resolve_method">
-        <item>Do not resolve</item>
-        <item>Resolve and add to DNS Hosts</item>
-        <item>Resolve and replace domain</item>
+        <item>عدم التحليل</item>
+        <item>تحليل وإضافة إلى مضيفي DNS</item>
+        <item>تحليل واستبدال النطاق</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>أقل ping</item>
+        <item>أقل حمل</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>افتراضي</item>
+        <item>متوسط</item>
+        <item>عالي</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>اتباع النظام</item>
+        <item>فاتح</item>
+        <item>داكن</item>
     </string-array>
 </resources>

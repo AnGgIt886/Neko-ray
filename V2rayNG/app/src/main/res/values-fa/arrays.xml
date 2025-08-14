@@ -1,51 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mux_xudp_quic_entries">
+        <item>رد</item>
+        <item>اجازه</item>
         <item>رد کردن</item>
-        <item>مجاز</item>
-        <item>پریدن</item>
     </string-array>
 
     <string-array name="share_method">
-        <item>QRcode</item>
-        <item>خروجی گرفتن در کلیپ‌ بورد</item>
-        <item>خروجی گرفتن کانفیگ کامل در کلیپ بورد</item>
+        <item>کد QR</item>
+        <item>صادر به کلیپ‌بورد</item>
+        <item>صادر کردن پیکربندی کامل به کلیپ‌بورد</item>
     </string-array>
 
     <string-array name="share_method_more">
-        <item>QRcode</item>
-        <item>صادر کردن به کلیپ بورد</item>
-        <item>صادر کردن پیکربندی کامل به کلیپ بورد</item>
-        <item>ویرایش کردن</item>
-        <item>حذف کردن</item>
+        <item>کد QR</item>
+        <item>صادر به کلیپ‌بورد</item>
+        <item>صادر کردن پیکربندی کامل به کلیپ‌بورد</item>
+        <item>ویرایش</item>
+        <item>حذف</item>
     </string-array>
 
     <string-array name="share_sub_method">
-        <item>QRcode</item>
-        <item>خروجی گرفتن در کلیپ‌ بورد</item>
+        <item>کد QR</item>
+        <item>صادر به کلیپ‌بورد</item>
     </string-array>
 
     <string-array name="mode_entries">
         <item>VPN</item>
-        <item>فقط پروکسی</item>
-    </string-array>
-
-    <string-array name="preset_rulesets">
-        <item>( دور زدن سرزمین اصلی ) لیست سفید چین</item>
-        <item>لیست سیاه چین</item>
-        <item>جهانی(GLOBAL)</item>
-        <item>ایران</item>
+        <item>فقط پراکسی</item>
     </string-array>
 
     <string-array name="vpn_bypass_lan">
-        <item>پیش فرض کانفیگ</item>
-        <item>دور زده شود</item>
-        <item>دور زده نشود</item>
+        <item>پیروی از پیکربندی</item>
+        <item>دور زدن</item>
+        <item>عدم دور زدن</item>
     </string-array>
-    
+
+    <string-array name="preset_rulesets">
+        <item>لیست سفید چین</item>
+        <item>لیست سیاه چین</item>
+        <item>جهانی</item>
+        <item>لیست سفید ایران</item>
+    </string-array>
+
     <string-array name="outbound_domain_resolve_method">
-        <item>Do not resolve</item>
-        <item>Resolve and add to DNS Hosts</item>
-        <item>Resolve and replace domain</item>
+        <item>عدم حل</item>
+        <item>حل و اضافه به میزبان‌های DNS</item>
+        <item>حل و جایگزینی دامنه</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>کمترین پینگ</item>
+        <item>کمترین بار</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>پیش‌فرض</item>
+        <item>متوسط</item>
+        <item>بالا</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>پیروی از سیستم</item>
+        <item>روشن</item>
+        <item>تاریک</item>
     </string-array>
 </resources>

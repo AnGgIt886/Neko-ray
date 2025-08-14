@@ -7,45 +7,62 @@
     </string-array>
 
     <string-array name="share_method">
-        <item>Xuất ra mã QR (Chụp màn hình để lưu)</item>
-        <item>Sao chép vào Clipboard</item>
-        <item>Sao chép thành cấu hình tùy chỉnh</item>
+        <item>Mã QR</item>
+        <item>Xuất vào clipboard</item>
+        <item>Xuất cấu hình đầy đủ vào clipboard</item>
     </string-array>
 
     <string-array name="share_method_more">
-         <item>QRcode</item>
-         <item>Export to clipboard</item>
-         <item>Export full configuration to clipboard</item>
-         <item>Edit</item>
-         <item>Delete</item>
-     </string-array>
+        <item>Mã QR</item>
+        <item>Xuất vào clipboard</item>
+        <item>Xuất cấu hình đầy đủ vào clipboard</item>
+        <item>Chỉnh sửa</item>
+        <item>Xóa</item>
+    </string-array>
 
     <string-array name="share_sub_method">
-        <item>Xuất gói ra mã QR (Chụp màn hình để lưu)</item>
-        <item>Xuất gói vào Clipboard</item>
+        <item>Mã QR</item>
+        <item>Xuất vào clipboard</item>
     </string-array>
 
     <string-array name="mode_entries">
-        <item>Chế độ VPN</item>
-        <item>Chế độ Proxy</item>
-    </string-array>
-
-    <string-array name="preset_rulesets">
-        <item>Danh sách trắng của Trung Quốc</item>
-        <item>Danh sách đen Trung Quốc</item>
-        <item>Toàn cầu</item>
-        <item>Danh sách trắng của Iran</item>
+        <item>VPN</item>
+        <item>Chỉ proxy</item>
     </string-array>
 
     <string-array name="vpn_bypass_lan">
-        <item>Follow config</item>
-        <item>Bypass</item>
-        <item>Not Bypass</item>
+        <item>Theo cấu hình</item>
+        <item>Bỏ qua</item>
+        <item>Không bỏ qua</item>
     </string-array>
-    
+
+    <string-array name="preset_rulesets">
+        <item>Danh sách trắng Trung Quốc</item>
+        <item>Danh sách đen Trung Quốc</item>
+        <item>Toàn cầu</item>
+        <item>Danh sách trắng Iran</item>
+    </string-array>
+
     <string-array name="outbound_domain_resolve_method">
-        <item>Do not resolve</item>
-        <item>Resolve and add to DNS Hosts</item>
-        <item>Resolve and replace domain</item>
+        <item>Không phân giải</item>
+        <item>Phân giải và thêm vào DNS Hosts</item>
+        <item>Phân giải và thay thế tên miền</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>Ping thấp nhất</item>
+        <item>Tải thấp nhất</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>Mặc định</item>
+        <item>Trung bình</item>
+        <item>Cao</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Theo hệ thống</item>
+        <item>Sáng</item>
+        <item>Tối</item>
     </string-array>
 </resources>

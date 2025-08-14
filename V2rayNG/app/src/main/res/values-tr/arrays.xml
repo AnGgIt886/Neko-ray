@@ -1,38 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mux_xudp_quic_entries">
-        <item>reddet</item>
-        <item>izin ver</item>
-        <item>atla</item>
+        <item>Reddet</item>
+        <item>İzin ver</item>
+        <item>Atla</item>
+    </string-array>
+
+    <string-array name="share_method">
+        <item>QR kodu</item>
+        <item>Panoya kopyala</item>
+        <item>Tam yapılandırmayı panoya kopyala</item>
     </string-array>
 
     <string-array name="share_method_more">
-         <item>QRcode</item>
-         <item>Export to clipboard</item>
-         <item>Export full configuration to clipboard</item>
-         <item>Edit</item>
-         <item>Delete</item>
-     </string-array>
-
-    <string-array name="share_method">
-        <item>QR kod</item>
-        <item>Panoya aktar</item>
-        <item>Tam yapılandırmayı panoya aktar</item>
+        <item>QR kodu</item>
+        <item>Panoya kopyala</item>
+        <item>Tam yapılandırmayı panoya kopyala</item>
+        <item>Düzenle</item>
+        <item>Sil</item>
     </string-array>
 
     <string-array name="share_sub_method">
-        <item>QR kod</item>
-        <item>Panoya aktar</item>
+        <item>QR kodu</item>
+        <item>Panoya kopyala</item>
     </string-array>
 
     <string-array name="mode_entries">
         <item>VPN</item>
-        <item>Sadece Proxy</item>
+        <item>Yalnızca proxy</item>
     </string-array>
-    
+
+    <string-array name="vpn_bypass_lan">
+        <item>Yapılandırmayı takip et</item>
+        <item>Atla</item>
+        <item>Atlamadan</item>
+    </string-array>
+
+    <string-array name="preset_rulesets">
+        <item>Çin Beyaz Listesi</item>
+        <item>Çin Kara Listesi</item>
+        <item>Global</item>
+        <item>İran Beyaz Listesi</item>
+    </string-array>
+
     <string-array name="outbound_domain_resolve_method">
-        <item>Do not resolve</item>
-        <item>Resolve and add to DNS Hosts</item>
-        <item>Resolve and replace domain</item>
+        <item>Çözümleme yapma</item>
+        <item>Çözümle ve DNS Hostlarına ekle</item>
+        <item>Çözümle ve alan adını değiştir</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>En düşük ping</item>
+        <item>En düşük yük</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>Varsayılan</item>
+        <item>Orta</item>
+        <item>Yüksek</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>Sistemi takip et</item>
+        <item>Açık</item>
+        <item>Koyu</item>
     </string-array>
 </resources>

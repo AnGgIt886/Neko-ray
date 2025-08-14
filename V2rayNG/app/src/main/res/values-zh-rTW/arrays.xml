@@ -1,51 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="mux_xudp_quic_entries">
-        <item>不代理</item>
-        <item>多路復用</item>
-        <item>原生</item>
+        <item>拒絕</item>
+        <item>允許</item>
+        <item>跳過</item>
     </string-array>
 
     <string-array name="share_method">
-        <item>QR Code</item>
-        <item>匯出至剪貼簿</item>
-        <item>匯出完整設定至剪貼簿</item>
+        <item>QR碼</item>
+        <item>導出到剪貼板</item>
+        <item>導出完整配置到剪貼板</item>
     </string-array>
 
     <string-array name="share_method_more">
-         <item>QR Code</item>
-         <item>匯出至剪貼簿</item>
-         <item>匯出完整設定至剪貼簿</item>
-         <item>編輯</item>
-         <item>刪除</item>
-     </string-array>
+        <item>QR碼</item>
+        <item>導出到剪貼板</item>
+        <item>導出完整配置到剪貼板</item>
+        <item>編輯</item>
+        <item>刪除</item>
+    </string-array>
 
     <string-array name="share_sub_method">
-        <item>QR Code</item>
-        <item>匯出至剪貼簿</item>
+        <item>QR碼</item>
+        <item>導出到剪貼板</item>
     </string-array>
 
     <string-array name="mode_entries">
         <item>VPN</item>
-        <item>僅 Proxy</item>
-    </string-array>
-
-    <string-array name="preset_rulesets">
-        <item>繞過大陸(Whitelist)</item>
-        <item>黑名單(Blacklist)</item>
-        <item>全域(Global)</item>
-        <item>伊朗(Iran)</item>
+        <item>僅代理</item>
     </string-array>
 
     <string-array name="vpn_bypass_lan">
-        <item>跟隨設定檔</item>
+        <item>跟隨配置</item>
         <item>繞過</item>
         <item>不繞過</item>
     </string-array>
-    
+
+    <string-array name="preset_rulesets">
+        <item>中國白名單</item>
+        <item>中國黑名單</item>
+        <item>全局</item>
+        <item>伊朗白名單</item>
+    </string-array>
+
     <string-array name="outbound_domain_resolve_method">
         <item>不解析</item>
-        <item>解析後加入 DNS Hosts</item>
-        <item>解析後替換原網域名稱</item>
+        <item>解析並添加到DNS主機</item>
+        <item>解析並替換域名</item>
+    </string-array>
+
+    <string-array name="intelligent_selection_method">
+        <item>最低延遲</item>
+        <item>最低負載</item>
+    </string-array>
+
+    <string-array name="contrast_level_entries">
+        <item>默認</item>
+        <item>中等</item>
+        <item>高</item>
+    </string-array>
+
+    <string-array name="dark_mode_entries">
+        <item>跟隨系統</item>
+        <item>淺色</item>
+        <item>深色</item>
     </string-array>
 </resources>
