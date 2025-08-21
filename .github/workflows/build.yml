@@ -40,7 +40,6 @@ jobs:
       - name: Add Dependabot label
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.MY_TOKEN }}
           script: |
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
