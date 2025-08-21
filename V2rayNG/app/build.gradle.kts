@@ -9,13 +9,13 @@ plugins {
 
 android {
     namespace = "com.neko.v2ray"
-    compileSdk = 35
-    buildToolsVersion = "35.0.0"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
         applicationId = "com.neko.v2ray"
         minSdk = 27
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 659
         versionName = "1.10.9"
         multiDexEnabled = true
@@ -33,7 +33,7 @@ android {
         resValue("string", "neko_build_date", formattedDate)
         resValue("string", "neko_app_version", "$versionName ($versionCode)")
         resValue("string", "neko_min_sdk_version", "$minSdk (Android 8, Oreo)")
-        resValue("string", "neko_target_sdk_version", "$targetSdk (Android 15, Vanilla Ice Cream)")
+        resValue("string", "neko_target_sdk_version", "$targetSdk (Android 16, Baklava)")
         resValue("string", "neko_packagename", "$applicationId")
     }
 
