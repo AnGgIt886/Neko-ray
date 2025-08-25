@@ -10,6 +10,9 @@ on:
         required: false
         type: string
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 env:
   ANDROID_SDK_VERSION: '36'
   BUILD_TOOLS_VERSION: '36.0.0'
