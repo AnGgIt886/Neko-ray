@@ -1,5 +1,18 @@
 [
     {
+        "version": "1.10.19",
+        "date": "2025-08-28",
+        "changes": [
+            "The REALITY protocol adds the ML-DSA-65 signature verification setting mldsa65Verify",
+            "Added option to enable new TUN feature. If enabled, TUN will use hev-socks5-tunnel; otherwise, it will use badvpn-tun2socks",
+            "Fix hev-socks5-tunnel local DNS",
+            "Add some settings for hev-socks5-tunnel",
+            "Add VPN MTU setting",
+            "Add indonesian language",
+            "Update SDK to 36 (Android 16)"
+        ]
+    },
+    {
         "version": "1.10.9",
         "date": "2025-07-17",
         "changes": [

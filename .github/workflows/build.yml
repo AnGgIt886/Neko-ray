@@ -274,9 +274,22 @@ jobs:
       - name: Prepare release assets
         if: github.event.inputs.release_tag != ''
         run: |
-          mkdir -p release-assets
-          cp ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*.apk release-assets/
-          echo "APK_PATHS=$(ls release-assets/*.apk | tr '\n' ' ')" >> $GITHUB_ENV
+          mkdir -p ${{ github.workspace }}/release-assets
+          cp ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*.apk ${{ github.workspace }}/release-assets/
+          echo "APK_PATHS=$(ls ${{ github.workspace }}/release-assets/*.apk | tr '\n' ' ')" >> $GITHUB_ENV
+
+      - name: Prepare and upload release assets
+        if: github.event.inputs.release_tag != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-apks
+          path: |
+            ${{ github.workspace }}/release-assets/*arm64-v8a.apk
+            ${{ github.workspace }}/release-assets/*armeabi-v7a.apk
+            ${{ github.workspace }}/release-assets/*x86.apk
+            ${{ github.workspace }}/release-assets/*x86_64.apk
+            ${{ github.workspace }}/release-assets/*universal.apk
+          retention-days: 1
 
       - name: Clean up build files
         if: always()
@@ -296,7 +309,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: built-apks
-          path: release-assets
+          path: ${{ github.workspace }}/release-assets
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -313,8 +326,4 @@ jobs:
           prerelease: false
           make_latest: true
           files: |
-            release-assets/*arm64-v8a.apk
-            release-assets/*armeabi-v7a.apk
-            release-assets/*x86.apk
-            release-assets/*x86_64.apk
-            release-assets/*universal.apk
+            ${{ github.workspace }}/release-assets/*.apk
