@@ -43,6 +43,7 @@
     <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_LOGS" android:minSdkVersion="30" tools:ignore="ProtectedPermissions"/>
@@ -81,7 +82,7 @@
         </activity>
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
-            android:name="com.neko.v2ray.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:launchMode="singleTask" />
@@ -196,22 +197,22 @@
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
-            android:name="com.neko.v2ray.ui.CreditsActivity"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity"
+            android:name=".ui.CreditsActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
-            android:name="com.neko.v2ray.ui.NekoAboutActivity"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity"
+            android:name=".ui.NekoAboutActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
-            android:name="com.neko.v2ray.ui.NekoBackupActivity"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity"
+            android:name=".ui.NekoBackupActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
@@ -231,42 +232,42 @@
             android:name="com.neko.hosttoip.HostToIPActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.ip.hostchecker.HostChecker"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.iplocation.IpLocationActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.hostnamefinder.HostnameFinder"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.server.VpnServerActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.config.V2rayConfigActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.neko.v2ray.ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity" />
 
         <activity
             android:name="com.mikepenz.aboutlibraries.ui.LibsActivity"
@@ -287,7 +288,7 @@
             android:exported="false" />
 
         <activity
-            android:name="com.neko.v2ray.ui.ThemeSettingsActivity"
+            android:name=".ui.ThemeSettingsActivity"
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:screenOrientation="portrait"
             android:exported="false" />
@@ -351,8 +352,8 @@
                 android:resource="@xml/app_widget_provider" />
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.neko.v2ray.action.widget.click" />
-                <action android:name="com.neko.v2ray.action.activity" />
+                <action android:name=".action.widget.click" />
+                <action android:name=".action.activity" />
             </intent-filter>
         </receiver>
 

@@ -15,6 +15,11 @@ object MigrateManager {
     private const val ID_SERVER_CONFIG = "SERVER_CONFIG"
     private val serverStorage by lazy { MMKV.mmkvWithID(ID_SERVER_CONFIG, MMKV.MULTI_PROCESS_MODE) }
 
+    /**
+     * Migrates server configurations to profile items.
+     *
+     * @return True if migration was successful, false otherwise.
+     */
     fun migrateServerConfig2Profile(): Boolean {
         if (serverStorage.count().toInt() == 0) {
             return false
@@ -43,6 +48,12 @@ object MigrateManager {
         return true
     }
 
+    /**
+     * Migrates a server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrateServerConfig2ProfileSub(configOld: ServerConfig): ProfileItem? {
         return when (configOld.getProxyOutbound()?.protocol) {
             EConfigType.VMESS.name.lowercase() -> migrate2ProfileCommon(configOld)
@@ -61,6 +72,12 @@ object MigrateManager {
         }
     }
 
+    /**
+     * Migrates a common server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrate2ProfileCommon(configOld: ServerConfig): ProfileItem? {
         val config = ProfileItem.create(configOld.configType)
 
@@ -100,6 +117,12 @@ object MigrateManager {
         return config
     }
 
+    /**
+     * Migrates a SOCKS server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrate2ProfileSocks(configOld: ServerConfig): ProfileItem? {
         val config = ProfileItem.create(EConfigType.SOCKS)
 
@@ -113,6 +136,12 @@ object MigrateManager {
         return config
     }
 
+    /**
+     * Migrates an HTTP server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrate2ProfileHttp(configOld: ServerConfig): ProfileItem? {
         val config = ProfileItem.create(EConfigType.HTTP)
 
@@ -126,6 +155,12 @@ object MigrateManager {
         return config
     }
 
+    /**
+     * Migrates a WireGuard server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrate2ProfileWireguard(configOld: ServerConfig): ProfileItem? {
         val config = ProfileItem.create(EConfigType.WIREGUARD)
 
@@ -144,6 +179,12 @@ object MigrateManager {
         return config
     }
 
+    /**
+     * Migrates a Hysteria2 server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrate2ProfileHysteria2(configOld: ServerConfig): ProfileItem? {
         val config = ProfileItem.create(EConfigType.HYSTERIA2)
 
@@ -165,6 +206,12 @@ object MigrateManager {
         return config
     }
 
+    /**
+     * Migrates a custom server configuration to a profile item.
+     *
+     * @param configOld The old server configuration.
+     * @return The profile item.
+     */
     private fun migrate2ProfileCustom(configOld: ServerConfig): ProfileItem? {
         val config = ProfileItem.create(EConfigType.CUSTOM)
 
@@ -176,7 +223,12 @@ object MigrateManager {
         return config
     }
 
-
+    /**
+     * Decodes the old server configuration.
+     *
+     * @param guid The server GUID.
+     * @return The old server configuration.
+     */
     private fun decodeServerConfigOld(guid: String): ServerConfig? {
         if (guid.isBlank()) {
             return null

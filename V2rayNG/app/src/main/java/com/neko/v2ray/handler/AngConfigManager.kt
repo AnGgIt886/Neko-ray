@@ -26,8 +26,13 @@ import java.net.URI
 
 object AngConfigManager {
 
+
     /**
-     * share2Clipboard
+     * Shares the configuration to the clipboard.
+     *
+     * @param context The context.
+     * @param guid The GUID of the configuration.
+     * @return The result code.
      */
     fun share2Clipboard(context: Context, guid: String): Int {
         try {
@@ -46,7 +51,11 @@ object AngConfigManager {
     }
 
     /**
-     * share2Clipboard
+     * Shares non-custom configurations to the clipboard.
+     *
+     * @param context The context.
+     * @param serverList The list of server GUIDs.
+     * @return The number of configurations shared.
      */
     fun shareNonCustomConfigsToClipboard(context: Context, serverList: List<String>): Int {
         try {
@@ -70,7 +79,10 @@ object AngConfigManager {
     }
 
     /**
-     * share2QRCode
+     * Shares the configuration as a QR code.
+     *
+     * @param guid The GUID of the configuration.
+     * @return The QR code bitmap.
      */
     fun share2QRCode(guid: String): Bitmap? {
         try {
@@ -87,7 +99,11 @@ object AngConfigManager {
     }
 
     /**
-     * shareFullContent2Clipboard
+     * Shares the full content of the configuration to the clipboard.
+     *
+     * @param context The context.
+     * @param guid The GUID of the configuration.
+     * @return The result code.
      */
     fun shareFullContent2Clipboard(context: Context, guid: String?): Int {
         try {
@@ -382,6 +398,12 @@ object AngConfigManager {
         return count
     }
 
+    /**
+     * Updates the configuration via a subscription.
+     *
+     * @param it The subscription item.
+     * @return The number of configurations updated.
+     */
     fun updateConfigViaSub(it: Pair<String, SubscriptionItem>): Int {
         try {
             if (TextUtils.isEmpty(it.first)
@@ -429,6 +451,14 @@ object AngConfigManager {
         }
     }
 
+    /**
+     * Parses the configuration via a subscription.
+     *
+     * @param server The server string.
+     * @param subid The subscription ID.
+     * @param append Whether to append the configurations.
+     * @return The number of configurations parsed.
+     */
     private fun parseConfigViaSub(server: String?, subid: String, append: Boolean): Int {
         var count = parseBatchConfig(Utils.decode(server), subid, append)
         if (count <= 0) {
@@ -440,6 +470,12 @@ object AngConfigManager {
         return count
     }
 
+    /**
+     * Imports a URL as a subscription.
+     *
+     * @param url The URL.
+     * @return The number of subscriptions imported.
+     */
     private fun importUrlAsSubscription(url: String): Int {
         val subscriptions = MmkvManager.decodeSubscriptions()
         subscriptions.forEach {
