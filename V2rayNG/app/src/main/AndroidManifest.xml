@@ -198,21 +198,18 @@
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name=".ui.CreditsActivity"
-            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name=".ui.NekoAboutActivity"
-            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name=".ui.NekoBackupActivity"
-            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
@@ -231,43 +228,37 @@
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.hosttoip.HostToIPActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.ip.hostchecker.HostChecker"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.iplocation.IpLocationActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.hostnamefinder.HostnameFinder"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.server.VpnServerActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:theme="@style/AppThemeDayNight.NoActionBar"
             android:name="com.neko.config.V2rayConfigActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.mikepenz.aboutlibraries.ui.LibsActivity"
