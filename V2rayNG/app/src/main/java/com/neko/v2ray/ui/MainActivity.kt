@@ -835,9 +835,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun openSettings() {
-        val intent = Intent(this, SettingsActivity::class.java).apply {
-            putExtra("isRunning", mainViewModel.isRunning.value == true)
-        }
+        val intent = Intent(this, SettingsActivity::class.java)
+        intent.putExtra("isRunning", mainViewModel.isRunning.value == true)
         startActivity(intent)
     }
 
