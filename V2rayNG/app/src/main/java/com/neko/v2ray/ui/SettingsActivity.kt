@@ -28,11 +28,6 @@ import com.neko.v2ray.util.Utils
 import com.neko.v2ray.viewmodel.SettingsViewModel
 import java.util.concurrent.TimeUnit
 
-import android.content.Context
-import android.net.Uri
-import android.os.PowerManager
-import android.provider.Settings
-
 class SettingsActivity : BaseActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
 

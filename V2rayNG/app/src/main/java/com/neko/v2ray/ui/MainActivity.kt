@@ -834,18 +834,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return super.onKeyDown(keyCode, event)
     }
 
-    private fun openSettings() {
-        val intent = Intent(this, SettingsActivity::class.java)
-        intent.putExtra("isRunning", mainViewModel.isRunning.value == true)
-        startActivity(intent)
-    }
-
     fun logcat(view: View) {
         startActivity(Intent(this, LogcatActivity::class.java))
     }
 
     fun settings(view: View) {
-        openSettings()
+        val intent = Intent(this, SettingsActivity::class.java)
+        intent.putExtra("isRunning", mainViewModel.isRunning.value == true)
+        startActivity(intent)
     }
 
     fun subSetting(view: View) {
