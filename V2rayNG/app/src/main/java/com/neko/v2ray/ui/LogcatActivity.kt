@@ -28,7 +28,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.IOException
 import java.util.LinkedList
 
 class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
@@ -43,6 +42,8 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
     private var currentQuery: String = ""
     private var currentLevelFilter: LogLevel? = null
     private val displayedLogsLimit = 2000
+    private var currentLogLimit = 500
+    private val logIncrement = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +61,9 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         addCustomDividerToRecyclerView(binding.recyclerView, this, R.drawable.custom_divider)
         binding.recyclerView.adapter = adapter
 
-        binding.refreshLayout.setOnRefreshListener(this)
+        binding.refreshLayout.setOnRefreshListener {
+            onRefresh()
+        }
 
         val fabScroll = findViewById<FloatingActionButton>(R.id.fab_scroll)
         fabScroll.setOnClickListener {
@@ -81,6 +84,12 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
                 } else {
                     fabScroll.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
                 }
+                
+                // Load more logs when scrolling near the top
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if (layoutManager.findFirstVisibleItemPosition() < 10 && logsetsAll.size > currentLogLimit) {
+                    loadMoreLogs()
+                }
             }
         })
 
@@ -88,53 +97,80 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun getLogcat() {
-        tryOrShowError({
+        try {
             binding.refreshLayout.isRefreshing = true
             binding.loadingIndicator.visibility = View.VISIBLE
 
             lifecycleScope.launch(Dispatchers.IO) {
-                val command = listOf(
-                    "logcat", "-d", "-v", "time", "-s",
-                    "GoLog,tun2socks,${ANG_PACKAGE},AndroidRuntime,System.err"
-                )
-                
-                val process = Runtime.getRuntime().exec(command.toTypedArray())
-                val allText = process.inputStream.bufferedReader().useLines { lines ->
-                    lines.take(displayedLogsLimit).toList().reversed()
-                }
-                
-                val parsedLogs = allText.map { LogcatRecyclerAdapter.parseLog(it) }
-                
-                withContext(Dispatchers.Main) {
-                    logsetsAll = parsedLogs.toMutableList()
-                    applyFilters()
-                    binding.refreshLayout.isRefreshing = false
-                    binding.loadingIndicator.visibility = View.GONE
-                    showEmptyState(logsets.isEmpty())
+                try {
+                    // Command yang lebih spesifik untuk V2Ray logs
+                    val command = listOf(
+                        "logcat", "-d", "-v", "time", 
+                        "GoLog:I", "tun2socks:I", "${ANG_PACKAGE}:I", 
+                        "AndroidRuntime:E", "System.err:E", "*:S"
+                    )
+                    
+                    val process = Runtime.getRuntime().exec(command.toTypedArray())
+                    val allText = process.inputStream.bufferedReader().useLines { lines ->
+                        lines.take(displayedLogsLimit).toList().reversed()
+                    }
+                    
+                    val parsedLogs = allText.map { LogcatRecyclerAdapter.parseLog(it) }
+                    
+                    withContext(Dispatchers.Main) {
+                        logsetsAll = parsedLogs.toMutableList()
+                        currentLogLimit = 500
+                        applyFilters()
+                        binding.refreshLayout.isRefreshing = false
+                        binding.loadingIndicator.visibility = View.GONE
+                        showEmptyState(logsets.isEmpty())
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        binding.refreshLayout.isRefreshing = false
+                        binding.loadingIndicator.visibility = View.GONE
+                        Toast.makeText(this@LogcatActivity, "Failed to retrieve logs: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-        }, "Failed to retrieve logs")
+        } catch (e: Exception) {
+            Log.e(AppConfig.TAG, "Failed to retrieve logs", e)
+            binding.refreshLayout.isRefreshing = false
+            binding.loadingIndicator.visibility = View.GONE
+            Toast.makeText(this, "Failed to retrieve logs", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun clearLogcat() {
-        tryOrShowError({
+        try {
             binding.loadingIndicator.visibility = View.VISIBLE
             
             lifecycleScope.launch(Dispatchers.Default) {
-                val command = listOf("logcat", "-c")
-                withContext(Dispatchers.IO) {
-                    val process = Runtime.getRuntime().exec(command.toTypedArray())
-                    process.waitFor()
-                }
-                launch(Dispatchers.Main) {
-                    logsetsAll.clear()
-                    logsets.clear()
-                    refreshData()
-                    binding.loadingIndicator.visibility = View.GONE
-                    showEmptyState(true)
+                try {
+                    val command = listOf("logcat", "-c")
+                    withContext(Dispatchers.IO) {
+                        val process = Runtime.getRuntime().exec(command.toTypedArray())
+                        process.waitFor()
+                    }
+                    withContext(Dispatchers.Main) {
+                        logsetsAll.clear()
+                        logsets.clear()
+                        refreshData()
+                        binding.loadingIndicator.visibility = View.GONE
+                        showEmptyState(true)
+                        Toast.makeText(this@LogcatActivity, "Logs cleared", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        binding.loadingIndicator.visibility = View.GONE
+                        Toast.makeText(this@LogcatActivity, "Failed to clear logs: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-        }, "Failed to clear logs")
+        } catch (e: Exception) {
+            binding.loadingIndicator.visibility = View.GONE
+            Toast.makeText(this, "Failed to clear logs", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -230,7 +266,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
             
             val key = content?.trim() ?: ""
             
-            var filtered = logsetsAll.toMutableList()
+            var filtered = logsetsAll.take(currentLogLimit).toMutableList()
             
             currentLevelFilter?.let { level ->
                 filtered = filtered.filter { it.level == level }.toMutableList()
@@ -239,8 +275,9 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
             if (key.isNotEmpty()) {
                 filtered = filtered.filter { 
                     it.content.contains(key, ignoreCase = true) || 
-                    it.tag.contains(key, ignoreCase = true)
-                }.take(displayedLogsLimit).toMutableList()
+                    it.tag.contains(key, ignoreCase = true) ||
+                    it.original.contains(key, ignoreCase = true)
+                }.toMutableList()
             }
             
             withContext(Dispatchers.Main) {
@@ -253,7 +290,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     private fun applyFilters() {
-        var filtered = logsetsAll.toMutableList()
+        var filtered = logsetsAll.take(currentLogLimit).toMutableList()
         
         currentLevelFilter?.let { level ->
             filtered = filtered.filter { it.level == level }.toMutableList()
@@ -262,13 +299,22 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         if (currentQuery.isNotEmpty()) {
             filtered = filtered.filter { 
                 it.content.contains(currentQuery, ignoreCase = true) || 
-                it.tag.contains(currentQuery, ignoreCase = true)
-            }.take(displayedLogsLimit).toMutableList()
+                it.tag.contains(currentQuery, ignoreCase = true) ||
+                it.original.contains(currentQuery, ignoreCase = true)
+            }.toMutableList()
         }
         
         logsets = filtered
         refreshData()
         showEmptyState(filtered.isEmpty() && (currentQuery.isNotEmpty() || currentLevelFilter != null))
+    }
+
+    private fun loadMoreLogs() {
+        if (logsetsAll.size > currentLogLimit) {
+            currentLogLimit += logIncrement
+            applyFilters()
+            Toast.makeText(this, "Loaded more logs ($currentLogLimit/${logsetsAll.size})", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showEmptyState(show: Boolean) {
@@ -286,7 +332,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val file = File(getExternalFilesDir(null), "logs_${System.currentTimeMillis()}.txt")
+                val file = File(getExternalFilesDir(null), "v2ray_logs_${System.currentTimeMillis()}.txt")
                 val logText = logsetsAll.joinToString("\n") { it.original }
                 file.writeText(logText)
                 
@@ -295,7 +341,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
                     Toast.makeText(
                         this@LogcatActivity, 
                         "Logs exported to ${file.name}", 
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                 }
             } catch (e: Exception) {
@@ -303,7 +349,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
                     binding.loadingIndicator.visibility = View.GONE
                     Toast.makeText(
                         this@LogcatActivity, 
-                        "Failed to export logs", 
+                        "Failed to export logs: ${e.message}", 
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -320,6 +366,9 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
                     getLogcat()
                 }
             }
+            Toast.makeText(this, "Auto refresh enabled", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Auto refresh disabled", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -338,19 +387,6 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
             return
         }
         binding.recyclerView.smoothScrollToPosition(position)
-    }
-
-    private inline fun <T> tryOrShowError(crossinline block: () -> T, errorMessage: String) {
-        try {
-            block()
-        } catch (e: Exception) {
-            Log.e(AppConfig.TAG, errorMessage, e)
-            lifecycleScope.launch(Dispatchers.Main) {
-                binding.refreshLayout.isRefreshing = false
-                binding.loadingIndicator.visibility = View.GONE
-                Toast.makeText(this@LogcatActivity, errorMessage, Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun onRefresh() {

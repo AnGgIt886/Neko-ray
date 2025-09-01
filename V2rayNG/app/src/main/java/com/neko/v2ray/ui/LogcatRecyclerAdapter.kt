@@ -1,7 +1,6 @@
 package com.neko.v2ray.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.BackgroundColorSpan
 import android.util.Log
@@ -66,7 +65,7 @@ class LogcatRecyclerAdapter(private val context: Context) : ListAdapter<ParsedLo
                 val startIndex = parsedLog.content.indexOf(_highlightText, ignoreCase = true)
                 if (startIndex != -1) {
                     spannable.setSpan(
-                        BackgroundColorSpan(R.color.log_bg_span),
+                        BackgroundColorSpan(ContextCompat.getColor(context, R.color.log_bg_span)),
                         startIndex,
                         startIndex + _highlightText.length,
                         SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -77,7 +76,7 @@ class LogcatRecyclerAdapter(private val context: Context) : ListAdapter<ParsedLo
                 holder.itemSubSettingBinding.logContent.text = parsedLog.content
             }
             
-            holder.itemSubSettingBinding.logContent.setTextColor(colorMap[parsedLog.level] ?: R.color.log_level_default)
+            holder.itemSubSettingBinding.logContent.setTextColor(colorMap[parsedLog.level] ?: ContextCompat.getColor(context, R.color.log_level_default))
             
             val indicatorColor = ContextCompat.getColor(context, 
                 levelIndicatorMap[parsedLog.level] ?: R.color.log_level_default)
@@ -100,7 +99,7 @@ class LogcatRecyclerAdapter(private val context: Context) : ListAdapter<ParsedLo
 
     fun updateHighlightText(newText: String) {
         _highlightText = newText
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 
     class MainViewHolder(val itemSubSettingBinding: ItemRecyclerLogcatBinding) : 
@@ -112,28 +111,50 @@ class LogcatRecyclerAdapter(private val context: Context) : ListAdapter<ParsedLo
             
             val level = detectLogLevel(log)
             
-            val tag = try {
-                log.substringBefore("):").substringBefore("(").trim()
-            } catch (e: Exception) {
-                "Unknown"
-            }
+            // Pattern untuk format timestamp Android: "MM-DD HH:MM:SS.millis"
+            val timestampPattern = "\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}".toRegex()
+            val timestampMatch = timestampPattern.find(log)
             
-            val content = try {
-                log.substringAfter("):", log).trim()
-            } catch (e: Exception) {
-                log
+            var tag = "Unknown"
+            var content = log
+            
+            if (timestampMatch != null) {
+                val timestamp = timestampMatch.value
+                val remaining = log.substringAfter(timestamp).trim()
+                
+                // Cari tag setelah timestamp (biasanya sebelum spasi pertama)
+                val nextSpaceIndex = remaining.indexOf(' ')
+                if (nextSpaceIndex > 0) {
+                    tag = remaining.substring(0, nextSpaceIndex).trim()
+                    content = remaining.substring(nextSpaceIndex).trim()
+                } else {
+                    content = remaining
+                }
             }
             
             return ParsedLog(log, tag, content, level)
         }
         
         private fun detectLogLevel(log: String): LogLevel {
+            // Deteksi level untuk V2Ray/Go logs
             return when {
-                log.contains(" E ", ignoreCase = true) -> LogLevel.ERROR
-                log.contains(" W ", ignoreCase = true) -> LogLevel.WARNING
-                log.contains(" I ", ignoreCase = true) -> LogLevel.INFO
-                log.contains(" D ", ignoreCase = true) -> LogLevel.DEBUG
-                log.contains(" V ", ignoreCase = true) -> LogLevel.VERBOSE
+                log.contains("\\[Error\\]".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains(" E/".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains("error", ignoreCase = true) -> LogLevel.ERROR
+                
+                log.contains("\\[Warn".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains(" W/".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains("warning", ignoreCase = true) -> LogLevel.WARNING
+                
+                log.contains("\\[Info\\]".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains(" I/".toRegex(RegexOption.IGNORE_CASE)) -> LogLevel.INFO
+                
+                log.contains("\\[Debug\\]".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains(" D/".toRegex(RegexOption.IGNORE_CASE)) -> LogLevel.DEBUG
+                
+                log.contains("\\[Verbose\\]".toRegex(RegexOption.IGNORE_CASE)) ||
+                log.contains(" V/".toRegex(RegexOption.IGNORE_CASE)) -> LogLevel.VERBOSE
+                
                 else -> LogLevel.UNKNOWN
             }
         }
