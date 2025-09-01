@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/search_view"
-        android:icon="@drawable/ic_outline_filter_alt_24"
-        android:title="@string/menu_item_search"
+        android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
+        app:showAsAction="always" />
+
     <item
-        android:id="@+id/clear_all"
-        android:icon="@drawable/ic_delete_24dp"
-        android:title="@string/logcat_clear"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/log_level_filter"
+        android:title="@string/filter_level"
+        app:showAsAction="never">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/filter_all"
+                    android:title="@string/all_levels" />
+                <item
+                    android:id="@+id/filter_error"
+                    android:title="@string/error" />
+                <item
+                    android:id="@+id/filter_warning"
+                    android:title="@string/warning" />
+                <item
+                    android:id="@+id/filter_info"
+                    android:title="@string/info" />
+                <item
+                    android:id="@+id/filter_debug"
+                    android:title="@string/debug" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/auto_refresh"
+        android:title="@string/auto_refresh"
+        app:showAsAction="never"
+        android:checkable="true" />
+
     <item
         android:id="@+id/copy_all"
-        android:icon="@drawable/ic_copy"
         android:title="@string/logcat_copy"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/clear_all"
+        android:title="@string/logcat_clear"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/export_logs"
+        android:title="@string/export_logs"
+        app:showAsAction="never" />
+
 </menu>

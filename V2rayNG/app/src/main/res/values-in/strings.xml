@@ -497,5 +497,7 @@
     <string name="uwu_support_title">Dukung Neko-Ray</string>
     <string name="uwu_support_summary">Berikan sedikit donasi kepada pengembang Neko-Ray</string>
     <string name="font_size">Ukuran font</string>
+    <string name="no_logs_found">Tidak ada log yang ditemukan</string>
+    <string name="export_logs">Ekspor Log</string>
     <!-- Neko strings -->
 </resources>

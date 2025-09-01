@@ -497,4 +497,6 @@
     <string name="uwu_support_title">Hỗ trợ Neko-Ray</string>
     <string name="uwu_support_summary">Quyên góp một chút cho các nhà phát triển Neko-Ray</string>
     <string name="font_size">Cỡ chữ</string>
+    <string name="no_logs_found">No logs found</string>
+    <string name="export_logs">Export Logs</string>
 </resources>

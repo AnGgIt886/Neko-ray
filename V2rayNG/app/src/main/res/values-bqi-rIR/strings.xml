@@ -465,5 +465,7 @@
     <string name="uwu_hostname_finder_summary">Find Other Websites Hosted on a Web Server Here</string>
     <string name="uwu_support_title">Support Neko-Ray</string>
     <string name="uwu_support_summary">Give a little donation to the Neko-Ray developers</string>
+    <string name="no_logs_found">No logs found</string>
+    <string name="export_logs">Export Logs</string>
     <!-- Neko strings -->
 </resources>

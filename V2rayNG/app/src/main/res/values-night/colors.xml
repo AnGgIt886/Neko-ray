@@ -20,4 +20,12 @@
     <color name="server_online_bg">#2E7D32</color>
     <color name="server_offline_bg">#C62828</color>
     <color name="server_card_bg">#424242</color>
+
+    <color name="log_level_default">#80FFFFFF</color>
+    <color name="log_level_error">#FFF44336</color>
+    <color name="log_level_warning">#FFFFC107</color>
+    <color name="log_level_info">#FF03A9F4</color>
+    <color name="log_level_debug">#FF8BC34A</color>
+    <color name="log_level_verbose">#FF757575</color>
+    <color name="log_bg_span">#FF5D4037</color>
 </resources>
