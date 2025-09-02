@@ -32,6 +32,10 @@ class CircleImageView @JvmOverloads constructor(
         Color.RED, Color.MAGENTA, Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.RED
     )
 
+    private var borderAnimator: ValueAnimator? = null
+    private var pulseWidthAnimator: ValueAnimator? = null
+    private var pulseAlphaAnimator: ValueAnimator? = null
+
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.CircleImageView, 0, 0).apply {
             try {
@@ -49,39 +53,77 @@ class CircleImageView @JvmOverloads constructor(
         borderPaint.color = borderColor
         borderPaint.strokeWidth = borderWidth
 
-        startBorderAnimation()
-        startPulseAnimation()
+        setupPaint()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        // Reset bitmap saat ukuran berubah
+        bitmap = null
+        bitmapShader = null
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (width == 0 || height == 0) return
+        
         val drawable = drawable ?: return
 
         if (bitmap == null) {
-            bitmap = getBitmapFromDrawable()
-            bitmapShader = BitmapShader(bitmap!!, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
-            paint.shader = bitmapShader
+            setupBitmap()
         }
 
-        val radius = (width.coerceAtMost(height) / 2f) - animatedBorderWidth / 2f
-        updateShaderMatrix()
-        canvas.drawCircle(width / 2f, height / 2f, radius, paint)
-
-        if (borderWidth > 0) {
-            if (rainbowBorderEnabled) {
-                val sweep = SweepGradient(width / 2f, height / 2f, rainbowColors, null)
-                val matrix = Matrix()
-                matrix.postRotate(sweepAngle, width / 2f, height / 2f)
-                sweep.setLocalMatrix(matrix)
-                borderPaint.shader = sweep
-            } else {
-                borderPaint.shader = null
-                borderPaint.color = borderColor
+        bitmap?.let { bitmap ->
+            bitmapShader?.let { shader ->
+                val radius = (width.coerceAtMost(height) / 2f) - animatedBorderWidth / 2f
+                updateShaderMatrix(bitmap)
+                
+                // Draw image
+                canvas.drawCircle(width / 2f, height / 2f, radius, paint)
+                
+                // Draw border
+                if (borderWidth > 0) {
+                    drawBorder(canvas, radius)
+                }
             }
-
-            borderPaint.strokeWidth = animatedBorderWidth
-            borderPaint.alpha = borderAlpha
-            canvas.drawCircle(width / 2f, height / 2f, radius, borderPaint)
         }
+    }
+
+    private fun setupPaint() {
+        paint.isAntiAlias = true
+        borderPaint.isAntiAlias = true
+        borderPaint.style = Paint.Style.STROKE
+        borderPaint.strokeCap = Paint.Cap.ROUND
+        borderPaint.strokeWidth = borderWidth
+    }
+
+    private fun setupBitmap() {
+        try {
+            bitmap = getBitmapFromDrawable()
+            bitmap?.let {
+                bitmapShader = BitmapShader(it, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+                paint.shader = bitmapShader
+                updateShaderMatrix(it)
+            }
+        } catch (e: Exception) {
+            // Handle exception
+        }
+    }
+
+    private fun drawBorder(canvas: Canvas, radius: Float) {
+        if (rainbowBorderEnabled) {
+            val sweep = SweepGradient(width / 2f, height / 2f, rainbowColors, null)
+            val matrix = Matrix()
+            matrix.postRotate(sweepAngle, width / 2f, height / 2f)
+            sweep.setLocalMatrix(matrix)
+            borderPaint.shader = sweep
+        } else {
+            borderPaint.shader = null
+            borderPaint.color = borderColor
+        }
+
+        borderPaint.strokeWidth = animatedBorderWidth
+        borderPaint.alpha = borderAlpha
+        canvas.drawCircle(width / 2f, height / 2f, radius, borderPaint)
     }
 
     private fun getBitmapFromDrawable(): Bitmap {
@@ -93,36 +135,47 @@ class CircleImageView @JvmOverloads constructor(
         return bmp
     }
 
-    private fun updateShaderMatrix() {
-        bitmap?.let {
-            val scale: Float
-            val dx: Float
-            val dy: Float
+    private fun updateShaderMatrix(bitmap: Bitmap) {
+        val scale: Float
+        val dx: Float
+        val dy: Float
 
-            shaderMatrix.set(null)
-            val viewWidth = width.toFloat()
-            val viewHeight = height.toFloat()
-            val bWidth = it.width.toFloat()
-            val bHeight = it.height.toFloat()
+        shaderMatrix.reset()
+        val viewWidth = width.toFloat()
+        val viewHeight = height.toFloat()
+        val bWidth = bitmap.width.toFloat()
+        val bHeight = bitmap.height.toFloat()
 
-            if (bWidth * viewHeight > viewWidth * bHeight) {
-                scale = viewHeight / bHeight
-                dx = (viewWidth - bWidth * scale) * 0.5f
-                dy = 0f
-            } else {
-                scale = viewWidth / bWidth
-                dx = 0f
-                dy = (viewHeight - bHeight * scale) * 0.5f
-            }
-
-            shaderMatrix.setScale(scale, scale)
-            shaderMatrix.postTranslate(dx, dy)
-            bitmapShader?.setLocalMatrix(shaderMatrix)
+        if (bWidth * viewHeight > viewWidth * bHeight) {
+            scale = viewHeight / bHeight
+            dx = (viewWidth - bWidth * scale) * 0.5f
+            dy = 0f
+        } else {
+            scale = viewWidth / bWidth
+            dx = 0f
+            dy = (viewHeight - bHeight * scale) * 0.5f
         }
+
+        shaderMatrix.setScale(scale, scale)
+        shaderMatrix.postTranslate(dx, dy)
+        bitmapShader?.setLocalMatrix(shaderMatrix)
+    }
+
+    fun startAnimations() {
+        startBorderAnimation()
+        startPulseAnimation()
+    }
+
+    fun stopAnimations() {
+        borderAnimator?.cancel()
+        pulseWidthAnimator?.cancel()
+        pulseAlphaAnimator?.cancel()
     }
 
     private fun startBorderAnimation() {
-        val animator = ValueAnimator.ofFloat(0f, 360f).apply {
+        borderAnimator?.cancel()
+        
+        borderAnimator = ValueAnimator.ofFloat(0f, 360f).apply {
             duration = 2000
             repeatCount = ValueAnimator.INFINITE
             interpolator = LinearInterpolator()
@@ -135,7 +188,10 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     private fun startPulseAnimation() {
-        ValueAnimator.ofFloat(borderWidth * 0.8f, borderWidth * 1.4f).apply {
+        pulseWidthAnimator?.cancel()
+        pulseAlphaAnimator?.cancel()
+        
+        pulseWidthAnimator = ValueAnimator.ofFloat(borderWidth * 0.8f, borderWidth * 1.4f).apply {
             duration = 1000
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
@@ -147,7 +203,7 @@ class CircleImageView @JvmOverloads constructor(
             start()
         }
 
-        ValueAnimator.ofInt(100, 255).apply {
+        pulseAlphaAnimator = ValueAnimator.ofInt(100, 255).apply {
             duration = 1000
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.REVERSE
@@ -163,5 +219,20 @@ class CircleImageView @JvmOverloads constructor(
     fun setRainbowBorderEnabled(enabled: Boolean) {
         rainbowBorderEnabled = enabled
         invalidate()
+        
+        // Restart border animation if needed
+        if (enabled) {
+            startBorderAnimation()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        stopAnimations()
+        
+        // Clean up bitmaps to prevent memory leaks
+        bitmap?.recycle()
+        bitmap = null
+        bitmapShader = null
     }
 }
