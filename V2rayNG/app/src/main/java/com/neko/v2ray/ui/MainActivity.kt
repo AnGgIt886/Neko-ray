@@ -56,6 +56,7 @@ import androidx.annotation.AttrRes
 import android.app.AppOpsManager
 import androidx.core.app.ActivityCompat
 import com.neko.appupdater.AppUpdater
+import com.neko.appupdater.AppUpdater.InstallPermissionCallback
 import com.neko.config.V2rayConfigActivity
 import com.neko.expandable.layout.ExpandableView
 import com.neko.tools.NetworkSwitcher
@@ -71,7 +72,7 @@ import com.google.android.material.card.MaterialCardView
 import com.neko.uwu.*
 import android.database.Cursor
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, InstallPermissionCallback {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -112,6 +113,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var arrTgl: ArrayList<String>
     private lateinit var arrHobi: ArrayList<String>
     private lateinit var arrEmail: ArrayList<String>
+    private lateinit var appUpdater: AppUpdater
 
     companion object {
         var posisiData = 0
@@ -254,14 +256,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         // Show new update with dialog
-        val appUpdater = AppUpdater(this).apply {
+        appUpdater = AppUpdater(this).apply {
             configUrl = AppConfig.UWU_UPDATE_URL
             showIfUpToDate = false
-            onUpdateAvailable = {
-                // Optional: aksi tambahan jika update tersedia
+            installPermissionCallback = this@MainActivity
+            onUpdateAvailable = { file ->
+                // toast("Update downloaded, installing...")
             }
             onUpdateNotAvailable = {
-                // Optional: aksi jika tidak ada update
+                // toast("App is already up to date!")
+            }
+            onDownloadError = { error ->
+                // toast("Update failed: $error")
             }
         }
         appUpdater.checkForUpdate()
@@ -953,5 +959,30 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    // === Permission Handling ===
+    // Interface for requesting permission for unknown sources
+    override fun requestInstallPermission(intent: Intent, requestCode: Int) {
+        startActivityForResult(intent, requestCode)
+    }
+
+    // Callback from AppUpdater to continue install
+    override fun onInstallPermissionResult(granted: Boolean) {
+        appUpdater.onInstallPermissionResult(granted)
+    }
+
+    // Handle permission results from users
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1234) {
+            val granted = resultCode == android.app.Activity.RESULT_OK
+            onInstallPermissionResult(granted)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdater.destroy()
     }
 }
