@@ -16,6 +16,14 @@
         android:textStyle="bold"
         android:paddingBottom="8dp" />
 
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/changelogRecyclerView"
         android:layout_width="match_parent"

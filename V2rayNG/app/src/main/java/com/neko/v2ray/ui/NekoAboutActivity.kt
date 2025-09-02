@@ -111,28 +111,46 @@ class NekoAboutActivity : BaseActivity(), InstallPermissionCallback {
     fun uwuSupport(view: View) {
         startActivity(Intent(this, NekoSupportActivity::class.java))
     }
-
+    
     // Show changelog bottom sheet
     fun changelog(view: View) {
         showChangelogBottomSheet()
     }
-
+    
     private fun showChangelogBottomSheet() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.changelog_bottom_sheet, null)
         bottomSheetDialog.setContentView(view)
-
+    
         val recyclerView = view.findViewById<RecyclerView>(R.id.changelogRecyclerView)
+        val emptyView = view.findViewById<TextView>(R.id.emptyView)
+        
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ChangelogAdapter(loadChangelogFromAssets())
-
+        
+        val changelogData = loadChangelogFromAssets()
+        
+        if (changelogData.isEmpty()) {
+            recyclerView.visibility = View.GONE
+            emptyView.visibility = View.VISIBLE
+            emptyView.text = "Changelog not available"
+        } else {
+            recyclerView.visibility = View.VISIBLE
+            emptyView.visibility = View.GONE
+            recyclerView.adapter = ChangelogAdapter(changelogData)
+        }
+    
         bottomSheetDialog.show()
     }
-
+    
     private fun loadChangelogFromAssets(): List<ChangelogEntry> {
-        val json = assets.open("changelog.json").bufferedReader().use { it.readText() }
-        val type = object : TypeToken<List<ChangelogEntry>>() {}.type
-        return Gson().fromJson(json, type)
+        return try {
+            val json = assets.open("changelog.json").bufferedReader().use { it.readText() }
+            val type = object : TypeToken<List<ChangelogEntry>>() {}.type
+            Gson().fromJson(json, type) ?: emptyList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
     // Start No Internet dialog
