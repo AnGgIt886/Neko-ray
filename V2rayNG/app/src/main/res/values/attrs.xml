@@ -75,6 +75,7 @@
         <attr name="borderColor" format="color" />
         <attr name="borderWidth" format="dimension" />
         <attr name="rainbowBorderEnabled" format="boolean" />
+        <attr name="autoStartAnimations" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="ImageSlider">

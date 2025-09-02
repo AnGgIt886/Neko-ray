@@ -23,6 +23,7 @@ class CircleImageView @JvmOverloads constructor(
     private var borderColor: Int = Color.WHITE
     private var borderWidth: Float = 8f
     private var rainbowBorderEnabled = false
+    private var autoStartAnimations = true
 
     private var sweepAngle = 0f
     private var animatedBorderWidth = borderWidth
@@ -42,6 +43,7 @@ class CircleImageView @JvmOverloads constructor(
                 borderColor = getColor(R.styleable.CircleImageView_borderColor, Color.WHITE)
                 borderWidth = getDimension(R.styleable.CircleImageView_borderWidth, 8f)
                 rainbowBorderEnabled = getBoolean(R.styleable.CircleImageView_rainbowBorderEnabled, false)
+                autoStartAnimations = getBoolean(R.styleable.CircleImageView_autoStartAnimations, true)
                 animatedBorderWidth = borderWidth
             } finally {
                 recycle()
@@ -54,6 +56,34 @@ class CircleImageView @JvmOverloads constructor(
         borderPaint.strokeWidth = borderWidth
 
         setupPaint()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (autoStartAnimations) {
+            startAnimations()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        stopAnimations()
+        
+        // Clean up bitmaps to prevent memory leaks
+        bitmap?.recycle()
+        bitmap = null
+        bitmapShader = null
+    }
+
+    override fun onVisibilityChanged(changedView: android.view.View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (autoStartAnimations) {
+            if (visibility == android.view.View.VISIBLE) {
+                startAnimations()
+            } else {
+                stopAnimations()
+            }
+        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -221,18 +251,17 @@ class CircleImageView @JvmOverloads constructor(
         invalidate()
         
         // Restart border animation if needed
-        if (enabled) {
+        if (enabled && autoStartAnimations) {
             startBorderAnimation()
         }
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        stopAnimations()
-        
-        // Clean up bitmaps to prevent memory leaks
-        bitmap?.recycle()
-        bitmap = null
-        bitmapShader = null
+    fun setAutoStartAnimations(enabled: Boolean) {
+        autoStartAnimations = enabled
+        if (enabled) {
+            startAnimations()
+        } else {
+            stopAnimations()
+        }
     }
 }
