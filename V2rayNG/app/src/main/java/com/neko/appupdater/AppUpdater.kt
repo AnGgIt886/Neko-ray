@@ -1,6 +1,8 @@
 package com.neko.appupdater
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -34,6 +36,7 @@ class AppUpdater(private val context: Context) {
     var installPermissionCallback: InstallPermissionCallback? = null
     private var apkFilePendingInstall: File? = null
     private var pendingUpdateResult: UpdateResult? = null
+    private var currentDownloadJob: Job? = null
 
     private val TAG = "AppUpdater"
     private val CHANNEL_ID = "update_channel"
@@ -44,23 +47,29 @@ class AppUpdater(private val context: Context) {
     var showIfUpToDate: Boolean = false
     var onUpdateAvailable: ((file: File) -> Unit)? = null
     var onUpdateNotAvailable: (() -> Unit)? = null
+    var onDownloadProgress: ((progress: Int) -> Unit)? = null
+    var onDownloadError: ((error: String) -> Unit)? = null
 
     private val prefs = context.getSharedPreferences("app_updater_prefs", Context.MODE_PRIVATE)
     private val PREF_SKIP_UPDATE_VERSION = "skip_update_version"
     private val PREF_SKIP_UPDATE_TIMESTAMP = "skip_update_timestamp"
     private val ONE_DAY_MILLIS = 24 * 60 * 60 * 1000L
 
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
     fun checkForUpdate(useNotificationIfAvailable: Boolean = false) {
         if (configUrl.isEmpty()) {
             Log.e(TAG, "Config URL is not set")
+            onDownloadError?.invoke("Config URL is not set")
             return
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
+        scope.launch {
             val result = fetchUpdate(configUrl)
 
             if (result == null) {
                 Log.e(TAG, "Failed to check for update")
+                onDownloadError?.invoke("Failed to check for update")
                 return@launch
             }
 
@@ -96,8 +105,8 @@ class AppUpdater(private val context: Context) {
     private suspend fun fetchUpdate(urlString: String): UpdateResult? = withContext(Dispatchers.IO) {
         try {
             val conn = URL(urlString).openConnection() as HttpURLConnection
-            conn.connectTimeout = 5000
-            conn.readTimeout = 5000
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
             conn.requestMethod = "GET"
 
             if (conn.responseCode == HttpURLConnection.HTTP_OK) {
@@ -133,7 +142,10 @@ class AppUpdater(private val context: Context) {
                 val updateAvailable = latestVersionCode > currentVersionCode
 
                 UpdateResult(updateAvailable, latestVersion, updateUrl, webUrl, releaseNotes)
-            } else null
+            } else {
+                Log.e(TAG, "HTTP error: ${conn.responseCode}")
+                null
+            }
         } catch (e: Exception) {
             Log.e(TAG, "fetchUpdate: error", e)
             null
@@ -239,7 +251,8 @@ class AppUpdater(private val context: Context) {
     }
 
     private fun downloadAndInstallApk(url: String) {
-        CoroutineScope(Dispatchers.Main).launch {
+        currentDownloadJob?.cancel()
+        currentDownloadJob = scope.launch {
             val dialogView = LayoutInflater.from(context)
                 .inflate(R.layout.uwu_dialog_progress_update, null)
             val progressBar = dialogView.findViewById<ProgressBar>(R.id.progressBar)
@@ -253,6 +266,7 @@ class AppUpdater(private val context: Context) {
                 .setCancelable(false)
                 .setNegativeButton(R.string.appupdater_btn_cancel) { _, _ ->
                     isCanceled = true
+                    currentDownloadJob?.cancel()
                 }
                 .create()
 
@@ -260,11 +274,22 @@ class AppUpdater(private val context: Context) {
 
             withContext(Dispatchers.IO) {
                 try {
-                    val fileName = "update.apk"
-                    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
+                    val fileName = "update_${System.currentTimeMillis()}.apk"
+                    val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                    val file = File(downloadDir, fileName)
+                    
+                    // Hapus file lama jika ada
+                    downloadDir?.listFiles()?.forEach { oldFile ->
+                        if (oldFile.name.startsWith("update_") && oldFile.name.endsWith(".apk")) {
+                            oldFile.delete()
+                        }
+                    }
+                    
                     if (file.exists()) file.delete()
 
                     val connection = URL(url).openConnection() as HttpURLConnection
+                    connection.connectTimeout = 15000
+                    connection.readTimeout = 30000
                     connection.connect()
 
                     val fileLength = connection.contentLength
@@ -276,7 +301,7 @@ class AppUpdater(private val context: Context) {
                     var count: Int
 
                     while (input.read(buffer).also { count = it } != -1) {
-                        if (isCanceled) {
+                        if (isCanceled || !isActive) {
                             input.close()
                             output.close()
                             file.delete()
@@ -290,11 +315,17 @@ class AppUpdater(private val context: Context) {
                         withContext(Dispatchers.Main) {
                             progressBar.progress = progress
                             tvProgressPercent.text = "$progress%"
+                            onDownloadProgress?.invoke(progress)
                         }
                     }
 
                     input.close()
                     output.close()
+
+                    // Verifikasi file
+                    if (!file.exists() || file.length() == 0L) {
+                        throw Exception("Downloaded file is invalid")
+                    }
 
                     withContext(Dispatchers.Main) {
                         progressDialog.dismiss()
@@ -310,6 +341,8 @@ class AppUpdater(private val context: Context) {
                     Log.e(TAG, "Download failed", e)
                     withContext(Dispatchers.Main) {
                         progressDialog.dismiss()
+                        showDownloadError(e.message ?: "Download failed")
+                        onDownloadError?.invoke(e.message ?: "Download failed")
                     }
                 }
             }
@@ -317,28 +350,51 @@ class AppUpdater(private val context: Context) {
     }
 
     fun installApk(file: File) {
-        val uri: Uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/vnd.android.package-archive")
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+        if (!file.exists() || file.length() == 0L) {
+            showDownloadError("APK file is invalid")
+            return
         }
-        context.startActivity(intent)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(30_000)
-            if (file.exists()) file.delete()
+        try {
+            val uri: Uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }
+            context.startActivity(intent)
+
+            // Hapus file setelah delay
+            scope.launch(Dispatchers.IO) {
+                delay(30000) // 30 detik
+                if (file.exists()) {
+                    file.delete()
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Install failed", e)
+            showDownloadError("Install failed: ${e.message}")
         }
     }
 
     fun onInstallPermissionResult(granted: Boolean) {
-        if (granted && apkFilePendingInstall != null) {
-            installApk(apkFilePendingInstall!!)
-            apkFilePendingInstall = null
-        }
-
-        if (granted && pendingUpdateResult != null) {
-            showUpdateDialog(pendingUpdateResult!!)
-            pendingUpdateResult = null
+        if (granted) {
+            apkFilePendingInstall?.let { file ->
+                if (file.exists() && file.length() > 0) {
+                    installApk(file)
+                } else {
+                    showDownloadError("APK file is missing or corrupted")
+                }
+                apkFilePendingInstall = null
+            }
+            
+            pendingUpdateResult?.let { result ->
+                showUpdateDialog(result)
+                pendingUpdateResult = null
+            }
+        } else {
+            showPermissionRequiredDialog()
+            onDownloadError?.invoke("Install permission denied")
         }
     }
 
@@ -354,6 +410,36 @@ class AppUpdater(private val context: Context) {
             .show()
     }
 
+    private fun showDownloadError(errorMessage: String? = null) {
+        val message = errorMessage ?: context.getString(R.string.appupdater_download_failed)
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.error)
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    private fun showPermissionRequiredDialog() {
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.appupdater_permission_required)
+            .setMessage(R.string.appupdater_install_permission_required)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    fun cancel() {
+        currentDownloadJob?.cancel()
+        scope.cancel()
+        apkFilePendingInstall?.delete()
+        apkFilePendingInstall = null
+        pendingUpdateResult = null
+    }
+
+    fun destroy() {
+        cancel()
+        installPermissionCallback = null
+    }
+
     private data class UpdateResult(
         val updateAvailable: Boolean,
         val latestVersion: String?,
@@ -361,4 +447,11 @@ class AppUpdater(private val context: Context) {
         val webUrl: String?,
         val releaseNotes: String?
     )
+
+    companion object {
+        const val ERROR_NETWORK = "network_error"
+        const val ERROR_DOWNLOAD = "download_error"
+        const val ERROR_INSTALL = "install_error"
+        const val ERROR_PERMISSION = "permission_error"
+    }
 }

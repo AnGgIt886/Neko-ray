@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +40,22 @@ class NekoAboutActivity : BaseActivity(), InstallPermissionCallback {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // Inisialisasi AppUpdater
+        appUpdater = AppUpdater(this).apply {
+            configUrl = AppConfig.UWU_UPDATE_URL
+            showIfUpToDate = true
+            installPermissionCallback = this@NekoAboutActivity
+            onUpdateAvailable = { file ->
+                // toast("Update downloaded, installing...")
+            }
+            onUpdateNotAvailable = {
+                // toast("App is already up to date!")
+            }
+            onDownloadError = { error ->
+                // toast("Update failed: $error")
+            }
+        }
+
         // Replace fragment to display content
         supportFragmentManager.beginTransaction()
             .replace(R.id.content_wrapper, NekoAboutFragment())
@@ -48,20 +65,6 @@ class NekoAboutActivity : BaseActivity(), InstallPermissionCallback {
     // Check for updates
     fun uwuUpdater(view: View) {
         startNoInternetDialog()
-
-        appUpdater = AppUpdater(this).apply {
-            configUrl = AppConfig.UWU_UPDATE_URL
-            showIfUpToDate = true
-            installPermissionCallback = this@NekoAboutActivity
-            onUpdateAvailable = { file ->
-                // The APK file has been downloaded, the install dialog will appear automatically.
-            }
-            onUpdateNotAvailable = {
-                // Can display toast or log
-            }
-        }
-
-        // Run update check
         appUpdater.checkForUpdate()
     }
 
@@ -107,7 +110,7 @@ class NekoAboutActivity : BaseActivity(), InstallPermissionCallback {
         startActivity(Intent(this, CreditsActivity::class.java))
     }
 
-    // Open sopport activity
+    // Open support activity
     fun uwuSupport(view: View) {
         startActivity(Intent(this, NekoSupportActivity::class.java))
     }
@@ -184,10 +187,13 @@ class NekoAboutActivity : BaseActivity(), InstallPermissionCallback {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1234) {
-            val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                packageManager.canRequestPackageInstalls()
-            } else true
+            val granted = resultCode == android.app.Activity.RESULT_OK
             onInstallPermissionResult(granted)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdater.destroy()
     }
 }
