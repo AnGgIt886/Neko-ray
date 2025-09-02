@@ -413,16 +413,16 @@ class AppUpdater(private val context: Context) {
     private fun showDownloadError(errorMessage: String? = null) {
         val message = errorMessage ?: context.getString(R.string.appupdater_download_failed)
         MaterialAlertDialogBuilder(context)
-            .setTitle(R.string.error)
+            .setTitle(context.getString(R.string.error))
             .setMessage(message)
             .setPositiveButton("OK", null)
             .show()
     }
-
+    
     private fun showPermissionRequiredDialog() {
         MaterialAlertDialogBuilder(context)
-            .setTitle(R.string.appupdater_permission_required)
-            .setMessage(R.string.appupdater_install_permission_required)
+            .setTitle(context.getString(R.string.appupdater_permission_required))
+            .setMessage(context.getString(R.string.appupdater_install_permission_required))
             .setPositiveButton("OK", null)
             .show()
     }

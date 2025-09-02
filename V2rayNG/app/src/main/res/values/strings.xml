@@ -508,4 +508,7 @@
     <string name="info">Info</string>
     <string name="debug">Debug</string>
     <string name="auto_refresh">Auto Refresh</string>
+    <string name="appupdater_download_failed">Download failed. Please try again.</string>
+    <string name="appupdater_permission_required">Permission Required</string>
+    <string name="appupdater_install_permission_required">Install permission is required to update the app. Please grant the permission and try again.</string>
 </resources>

@@ -499,5 +499,8 @@
     <string name="font_size">Ukuran font</string>
     <string name="no_logs_found">Tidak ada log yang ditemukan</string>
     <string name="export_logs">Ekspor Log</string>
+    <string name="appupdater_download_failed">Download gagal. Silakan coba lagi.</string>
+    <string name="appupdater_permission_required">Izin Diperlukan</string>
+    <string name="appupdater_install_permission_required">Izin instalasi diperlukan untuk memperbarui aplikasi. Harap berikan izin dan coba lagi.</string>
     <!-- Neko strings -->
 </resources>
