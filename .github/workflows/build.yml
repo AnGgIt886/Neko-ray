@@ -145,7 +145,7 @@ jobs:
 
       - name: Setup Golang
         if: steps.cache-libhysteria2.outputs.cache-hit != 'true'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: 'AndroidLibXrayLite/go.mod'
           cache: true
