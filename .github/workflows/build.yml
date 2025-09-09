@@ -20,41 +20,7 @@ env:
   CMDLINE_TOOLS_VERSION: '12266719'
 
 jobs:
-  dependabot-build:
-    if: github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          submodules: 'recursive'
-          fetch-depth: 0
-
-      - name: Minimal build verification
-        run: |
-          echo "🟢 Running minimal build verification for Dependabot PR"
-          echo "Dependency updates in PR: ${{ github.event.pull_request.title }}"
-
-      - name: Add Dependabot label
-        uses: actions/github-script@v8
-        with:
-          script: |
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              labels: ['dependencies']
-            })
-
   setup-environment:
-    if: (github.actor != 'dependabot[bot]' && github.event_name == 'push') || 
-        (github.actor != 'dependabot[bot]' && github.event_name == 'workflow_dispatch') || 
-        (github.actor == 'dependabot[bot]' && github.event_name != 'pull_request')
     runs-on: ubuntu-latest
     outputs:
       ndk-home: ${{ steps.setup-ndk.outputs.ndk-home }}
