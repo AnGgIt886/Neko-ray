@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:waveAmplitude="5.48"
+        app:waveAmplitudee="5.48"
         app:waveBackgroundColor="#00000000"
         app:waveColor="@color/uwu_bg_color"
         app:waveDensity="2.0"

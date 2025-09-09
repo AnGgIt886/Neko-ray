@@ -36,7 +36,7 @@
     <declare-styleable name="WaveView">
         <attr name="waveNumberOfWaves" format="integer" />
         <attr name="waveFrequency" format="float" />
-        <attr name="waveAmplitude" format="float" />
+        <attr name="waveAmplitudee" format="float" />
         <attr name="wavePhaseShift" format="float" />
         <attr name="waveDensity" format="float" />
         <attr name="wavePrimaryLineWidth" format="float" />

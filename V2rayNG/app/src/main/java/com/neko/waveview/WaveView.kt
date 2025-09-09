@@ -86,7 +86,7 @@ class WaveView : View {
         if (typedArray != null) {
             numberOfWaves = typedArray.getInt(R.styleable.WaveView_waveNumberOfWaves, DEFAULT_NUMBER_OF_WAVES)
             frequency = typedArray.getFloat(R.styleable.WaveView_waveFrequency, DEFAULT_FREQUENCY)
-            amplitude = typedArray.getFloat(R.styleable.WaveView_waveAmplitude, DEFAULT_AMPLITUDE)
+            amplitude = typedArray.getFloat(R.styleable.WaveView_waveAmplitudee, DEFAULT_AMPLITUDE)
             phaseShift = typedArray.getFloat(R.styleable.WaveView_wavePhaseShift, DEFAULT_PHASE_SHIFT)
             density = typedArray.getFloat(R.styleable.WaveView_waveDensity, DEFAULT_DENSITY)
             primaryWaveLineWidth = typedArray.getFloat(R.styleable.WaveView_wavePrimaryLineWidth, DEFAULT_PRIMARY_LINE_WIDTH)
@@ -186,7 +186,7 @@ class WaveView : View {
 
         fun numberOfWaves(value: Int) = apply { numberOfWaves = value }
         fun phase(value: Float) = apply { phase = value }
-        fun waveAmplitude(value: Float) = apply { amplitude = value }
+        fun waveAmplitudee(value: Float) = apply { amplitude = value }
         fun waveFrequency(value: Float) = apply { frequency = value }
         fun wavePhaseShift(value: Float) = apply { phaseShift = value }
         fun waveDensity(value: Float) = apply { density = value }
