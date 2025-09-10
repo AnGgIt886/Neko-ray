@@ -77,8 +77,8 @@ open class LibsActivity : BaseActivity(), SearchView.OnQueryTextListener {
             val searchView = menu.findItem(R.id.action_menu_search).actionView as? SearchView
             val editText = searchView?.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
 
-            editText?.setTextColor(searchView.context.getThemeColor(com.google.android.material.R.attr.colorControlNormal))
-            editText?.setHintTextColor(searchView.context.getThemeColor(com.google.android.material.R.attr.colorControlNormal))
+            editText?.setTextColor(searchView.context.getThemeColor(R.attr.colorText))
+            editText?.setHintTextColor(searchView.context.getThemeColor(R.attr.colorText))
 
             searchView?.maxWidth = Int.MAX_VALUE
             searchView?.setOnQueryTextListener(this)
