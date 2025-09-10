@@ -6,11 +6,13 @@
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <com.google.android.material.appbar.AppBarLayout
         android:theme="@style/AppTheme.AppBarOverlay"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:theme="@style/Uwu.Material3.CollapsingToolbar"
             android:id="@+id/collapsing_toolbar"
@@ -32,24 +34,30 @@
             app:title="Free Config"
             app:titleCollapseMode="scale"
             app:toolbarId="@+id/toolbar">
+
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
         <androidx.appcompat.widget.ActionBarContextView
             android:theme="?attr/actionModeTheme"
             android:id="@+id/action_context_bar"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
     </com.google.android.material.appbar.AppBarLayout>
+
     <FrameLayout
         android:background="@drawable/uwu_background_lengkung"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <androidx.cardview.widget.CardView
             android:paddingTop="16.0dip"
             android:layout_width="match_parent"
@@ -61,11 +69,13 @@
             app:cardBackgroundColor="#00000000"
             app:cardCornerRadius="14.0dip"
             app:cardElevation="0.0dip">
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/progressIndicator"
                     android:visibility="gone"
@@ -77,6 +87,7 @@
                     android:layout_marginStart="16.0dip"
                     android:layout_marginEnd="16.0dip"
                     app:indicatorColor="?attr/colorThemeUwu" />
+
                 <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -84,11 +95,13 @@
                     android:layout_marginStart="-16.0dip"
                     android:layout_marginEnd="-16.0dip"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
                     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
                         <LinearLayout
                             android:gravity="top"
                             android:orientation="vertical"
@@ -96,6 +109,7 @@
                             android:layout_height="match_parent"
                             android:layout_marginStart="16.0dip"
                             android:layout_marginEnd="16.0dip">
+
                             <androidx.cardview.widget.CardView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -104,6 +118,7 @@
                                 app:cardBackgroundColor="?attr/colorCard"
                                 app:cardCornerRadius="14.0dip"
                                 app:cardElevation="0.0dip">
+
                                 <LinearLayout
                                     android:orientation="vertical"
                                     android:paddingTop="15.0dip"
@@ -112,9 +127,11 @@
                                     android:layout_height="match_parent"
                                     android:paddingStart="12.0dip"
                                     android:paddingEnd="12.0dip">
+
                                     <RelativeLayout
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content">
+
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
@@ -122,6 +139,7 @@
                                             android:gravity="center_vertical"
                                             android:layout_centerVertical="true"
                                             android:layout_alignParentStart="true">
+
                                             <TextView
                                                 android:textSize="17.0sp"
                                                 android:textColor="?android:textColorPrimary"
@@ -129,6 +147,7 @@
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
                                                 android:text="@string/uwu_hostcheck_result" />
+
                                             <TextView
                                                 android:textSize="17.0sp"
                                                 android:textColor="?android:textColorSecondary"
@@ -138,16 +157,19 @@
                                                 android:layout_height="wrap_content"
                                                 android:text="" />
                                         </LinearLayout>
+
                                         <androidx.cardview.widget.CardView
                                             android:clickable="true"
                                             android:layout_width="40.0dip"
                                             android:layout_height="40.0dip"
                                             android:layout_centerVertical="true"
                                             android:layout_alignParentEnd="true"
+                                            android:layout_marginEnd="48.0dip"
                                             app:cardBackgroundColor="?attr/colorThemeUwu"
                                             app:cardCornerRadius="8.0dip"
                                             app:cardElevation="0.0dip"
                                             app:rippleColor="?android:colorControlHighlight">
+
                                             <ImageView
                                                 android:gravity="center"
                                                 android:layout_gravity="center"
@@ -159,7 +181,32 @@
                                                 android:tint="?attr/colorIcon"
                                                 android:backgroundTint="@android:color/transparent" />
                                         </androidx.cardview.widget.CardView>
+
+                                        <androidx.cardview.widget.CardView
+                                            android:clickable="true"
+                                            android:layout_width="40.0dip"
+                                            android:layout_height="40.0dip"
+                                            android:layout_centerVertical="true"
+                                            android:layout_alignParentEnd="true"
+                                            app:cardBackgroundColor="?attr/colorThemeUwu"
+                                            app:cardCornerRadius="8.0dip"
+                                            app:cardElevation="0.0dip"
+                                            app:rippleColor="?android:colorControlHighlight">
+
+                                            <ImageView
+                                                android:gravity="center"
+                                                android:layout_gravity="center"
+                                                android:id="@+id/btnPing"
+                                                android:padding="4.0dip"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:src="@drawable/ic_ping"
+                                                android:tint="?attr/colorIcon"
+                                                android:backgroundTint="@android:color/transparent" />
+                                        </androidx.cardview.widget.CardView>
+
                                     </RelativeLayout>
+
                                     <LinearLayout
                                         android:background="@drawable/uwu_card_license"
                                         android:orientation="vertical"
@@ -168,6 +215,7 @@
                                         android:layout_marginTop="8.0dip"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content">
+
                                         <TextView
                                             android:textSize="17.0sp"
                                             android:textColor="?android:textColorSecondary"
@@ -176,6 +224,7 @@
                                             android:layout_height="wrap_content"
                                             android:textIsSelectable="true" />
                                     </LinearLayout>
+
                                     <LinearLayout
                                         android:background="@drawable/uwu_card_license"
                                         android:orientation="horizontal"
@@ -187,6 +236,7 @@
                                         android:layout_marginBottom="8.0dip"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content">
+
                                         <TextView
                                             android:textSize="17.0sp"
                                             android:textColor="?android:textColorPrimary"
@@ -196,8 +246,32 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content" />
                                     </LinearLayout>
+
+                                    <LinearLayout
+                                        android:background="@drawable/uwu_card_license"
+                                        android:orientation="horizontal"
+                                        android:id="@+id/BgtextPing"
+                                        android:gravity="end"
+                                        android:layout_gravity="end"
+                                        android:padding="8.0dip"
+                                        android:layout_marginTop="8.0dip"
+                                        android:layout_marginBottom="8.0dip"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+
+                                        <TextView
+                                            android:textSize="17.0sp"
+                                            android:textColor="?android:textColorPrimary"
+                                            android:gravity="center"
+                                            android:layout_gravity="center"
+                                            android:id="@+id/textPingResult"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content" />
+                                    </LinearLayout>
+
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
+
                             <Button
                                 android:textSize="14.0sp"
                                 android:textColor="?attr/colorText"
@@ -212,6 +286,7 @@
                                 android:paddingEnd="16.0dip"
                                 android:layout_alignParentEnd="true"
                                 app:backgroundTint="?attr/colorThemeUwu" />
+
                         </LinearLayout>
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>

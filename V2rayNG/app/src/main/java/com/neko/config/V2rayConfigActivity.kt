@@ -8,7 +8,6 @@ import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.*
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.neko.v2ray.R
@@ -18,6 +17,13 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.InetAddress
 import java.net.URL
+import java.io.IOException
+import java.net.Socket
+import java.net.UnknownHostException
+import java.net.InetSocketAddress
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class V2rayConfigActivity : BaseActivity() {
 
@@ -26,14 +32,22 @@ class V2rayConfigActivity : BaseActivity() {
     private lateinit var textLoading: TextView
     private lateinit var btnGenerate: Button
     private lateinit var btnCopy: ImageView
+    private lateinit var btnPing: ImageView
     private lateinit var progressIndicator: LinearProgressIndicator
     private lateinit var textCountry: TextView
+    private lateinit var textPingResult: TextView
     private lateinit var BgtextConfig: LinearLayout
     private lateinit var BgtextCountry: LinearLayout
+    private lateinit var BgtextPing: LinearLayout
+
+    private var currentConfig: String = ""
+    private var currentIp: String? = null
+    private var currentPort: Int = 443 // Default port
 
     companion object {
         private const val TAG = "V2rayConfigActivity"
         private const val IPINFO_BASE_URL = "https://ipinfo.io"
+        private const val PING_TIMEOUT = 3000 // 3 seconds
         private val PROTOCOL_PREFIXES = listOf(
             "vmess://", "vless://", "trojan://",
             "ss://", "http://", "socks://",
@@ -58,13 +72,17 @@ class V2rayConfigActivity : BaseActivity() {
         textLoading = findViewById(R.id.textLoading)
         btnGenerate = findViewById(R.id.btnGenerate)
         btnCopy = findViewById(R.id.btnCopy)
+        btnPing = findViewById(R.id.btnPing)
         progressIndicator = findViewById(R.id.progressIndicator)
         textCountry = findViewById(R.id.textCountry)
+        textPingResult = findViewById(R.id.textPingResult)
         BgtextConfig = findViewById(R.id.BgtextConfig)
         BgtextCountry = findViewById(R.id.BgtextCountry)
+        BgtextPing = findViewById(R.id.BgtextPing)
 
         BgtextConfig.visibility = View.GONE
         BgtextCountry.visibility = View.GONE
+        BgtextPing.visibility = View.GONE
     }
 
     private fun setupButtonListeners() {
@@ -77,14 +95,33 @@ class V2rayConfigActivity : BaseActivity() {
         btnCopy.setOnClickListener {
             copyConfigToClipboard()
         }
+
+        btnPing.setOnClickListener {
+            currentIp?.let { ip ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        testPing(ip, currentPort)
+                    } catch (e: Exception) {
+                        Toast.makeText(this@V2rayConfigActivity, "Ping test failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } ?: run {
+                Toast.makeText(this@V2rayConfigActivity, "No IP address available for ping test", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun resetUI() {
         textLoading.text = "Loading..."
         textConfig.text = ""
         textCountry.text = ""
+        textPingResult.text = ""
         BgtextCountry.visibility = View.GONE
         BgtextConfig.visibility = View.GONE
+        BgtextPing.visibility = View.GONE
+        currentConfig = ""
+        currentIp = null
+        currentPort = 443 // Reset to default
     }
 
     private fun copyConfigToClipboard() {
@@ -95,21 +132,227 @@ class V2rayConfigActivity : BaseActivity() {
                 Toast.makeText(this@V2rayConfigActivity, "Copied to clipboard", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(this, "No config to copy", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@V2rayConfigActivity, "No config to copy", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private suspend fun extractIpFromConfig(config: String): String? {
-        extractDomainFromConfig(config)?.let { domain ->
-            resolveDomainToIp(domain)?.let { ip ->
-                return ip
+    private suspend fun testPing(ip: String, port: Int) {
+        withContext(Dispatchers.Main) {
+            textPingResult.text = "Testing ping to port $port..."
+            BgtextPing.visibility = View.VISIBLE
+        }
+
+        val pingResult = withContext(Dispatchers.IO) {
+            try {
+                val startTime = System.currentTimeMillis()
+                val socket = Socket()
+                socket.connect(InetSocketAddress(ip, port), PING_TIMEOUT)
+                socket.close()
+                val endTime = System.currentTimeMillis()
+                val pingTime = endTime - startTime
+                "Ping: ${pingTime}ms (port $port)"
+            } catch (e: UnknownHostException) {
+                "Ping failed: Unknown host (port $port)"
+            } catch (e: IOException) {
+                "Ping failed: Timeout or no connection (port $port)"
+            } catch (e: Exception) {
+                "Ping failed: ${e.localizedMessage} (port $port)"
             }
         }
 
+        withContext(Dispatchers.Main) {
+            textPingResult.text = pingResult
+        }
+    }
+
+    private suspend fun extractIpAndPortFromConfig(config: String): Pair<String?, Int> {
+        var ip: String? = null
+        var port = 443 // Default port
+
+        extractDomainFromConfig(config)?.let { domain ->
+            resolveDomainToIp(domain)?.let { resolvedIp ->
+                ip = resolvedIp
+            }
+        }
+
+        if (ip == null) {
+            when {
+                isEncodedConfig(config) -> {
+                    val result = extractFromEncodedConfigWithPort(config)
+                    ip = result.first
+                    port = result.second ?: port
+                }
+                else -> {
+                    val result = extractFromPlainConfigWithPort(config)
+                    ip = result.first
+                    port = result.second ?: port
+                }
+            } ?: run {
+                ip = extractIpFromText(config)
+            }
+        }
+
+        // If IP is found but port is not, find port from config
+        if (ip != null && port == 443) {
+            port = extractPortFromConfig(config) ?: port
+        }
+
+        return Pair(ip, port)
+    }
+
+    private fun extractPortFromConfig(config: String): Int? {
         return when {
-            isEncodedConfig(config) -> extractFromEncodedConfig(config)
-            else -> extractFromPlainConfig(config)
-        } ?: extractIpFromText(config)
+            config.startsWith("vmess://") -> extractPortFromVmess(config)
+            config.startsWith("vless://") -> extractPortFromVless(config)
+            config.startsWith("ss://") -> extractPortFromShadowsocks(config)
+            config.startsWith("trojan://") -> extractPortFromTrojan(config)
+            config.startsWith("hysteria2://") -> extractPortFromHysteria(config)
+            else -> extractPortFromText(config)
+        }
+    }
+
+    private fun extractPortFromVmess(config: String): Int? {
+        val decoded = decodeBase64Safe(config.removePrefix("vmess://"))
+        return try {
+            JSONObject(decoded).optString("port").toIntOrNull()
+        } catch (e: Exception) {
+            extractPortFromText(decoded)
+        }
+    }
+
+    private fun extractPortFromVless(config: String): Int? {
+        val afterPrefix = config.removePrefix("vless://")
+        val beforeParams = afterPrefix.substringBefore('?')
+        return beforeParams.substringAfterLast(':').substringBefore('/').toIntOrNull()
+            ?: extractPortFromText(afterPrefix)
+    }
+
+    private fun extractPortFromShadowsocks(config: String): Int? {
+        val afterPrefix = config.removePrefix("ss://")
+        val decoded = decodeBase64Safe(afterPrefix.substringBefore('#'))
+        return decoded.substringAfterLast('@').substringAfter(':').substringBefore('/').toIntOrNull()
+            ?: extractPortFromText(decoded)
+    }
+
+    private fun extractPortFromTrojan(config: String): Int? {
+        val afterPrefix = config.removePrefix("trojan://")
+        val beforeParams = afterPrefix.substringBefore('?')
+        return beforeParams.substringAfterLast(':').substringBefore('/').toIntOrNull()
+            ?: extractPortFromText(afterPrefix)
+    }
+
+    private fun extractPortFromHysteria(config: String): Int? {
+        val afterPrefix = config.removePrefix("hysteria2://")
+        return afterPrefix.substringAfterLast(':').substringBefore('/').toIntOrNull()
+            ?: extractPortFromText(afterPrefix)
+    }
+
+    private fun extractPortFromText(text: String): Int? {
+        val portRegex = """:(\d+)(?=/|\?|$|#)""".toRegex()
+        return portRegex.find(text)?.groups?.get(1)?.value?.toIntOrNull()
+    }
+
+    private fun extractFromEncodedConfigWithPort(config: String): Pair<String?, Int?> {
+        return try {
+            when {
+                config.startsWith("vmess://") -> handleVmessConfigWithPort(config)
+                config.startsWith("vless://") -> handleVlessConfigWithPort(config)
+                config.startsWith("ss://") -> handleShadowsocksConfigWithPort(config)
+                config.startsWith("trojan://") -> handleTrojanConfigWithPort(config)
+                config.startsWith("hysteria2://") -> handleHysteriaConfigWithPort(config)
+                else -> Pair(null, null)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Config decoding failed", e)
+            Pair(extractIpFromText(config), extractPortFromText(config))
+        }
+    }
+
+    private fun handleVmessConfigWithPort(config: String): Pair<String?, Int?> {
+        val decoded = decodeBase64Safe(config.removePrefix("vmess://"))
+        return try {
+            JSONObject(decoded).let { json ->
+                val ip = listOf("add", "server", "address").firstNotNullOfOrNull { key ->
+                    json.optString(key).takeIf { isValidIp(it) }
+                }
+                val port = json.optString("port").toIntOrNull()
+                Pair(ip ?: extractIpFromText(decoded), port ?: extractPortFromText(decoded))
+            }
+        } catch (e: Exception) {
+            Pair(extractIpFromText(decoded), extractPortFromText(decoded))
+        }
+    }
+
+    private fun handleVlessConfigWithPort(config: String): Pair<String?, Int?> {
+        val decoded = decodeBase64Safe(config.removePrefix("vless://"))
+        val ip = extractIpFromText(decoded)
+        val port = extractPortFromText(decoded)
+        return Pair(ip, port)
+    }
+
+    private fun handleShadowsocksConfigWithPort(config: String): Pair<String?, Int?> {
+        val decoded = decodeBase64Safe(config.removePrefix("ss://"))
+        val parts = decoded.substringAfter('@').split(':')
+        val ip = parts.getOrNull(0)?.takeIf { isValidIp(it) }
+        val port = parts.getOrNull(1)?.toIntOrNull()
+        return Pair(ip ?: extractIpFromText(decoded), port ?: extractPortFromText(decoded))
+    }
+
+    private fun handleTrojanConfigWithPort(config: String): Pair<String?, Int?> {
+        val decoded = decodeBase64Safe(config.removePrefix("trojan://"))
+        val parts = decoded.substringAfter('@').split(':')
+        val ip = parts.getOrNull(0)?.takeIf { isValidIp(it) }
+        val port = parts.getOrNull(1)?.toIntOrNull()
+        return Pair(ip ?: extractIpFromText(decoded), port ?: extractPortFromText(decoded))
+    }
+
+    private fun handleHysteriaConfigWithPort(config: String): Pair<String?, Int?> {
+        val decoded = decodeBase64Safe(config.removePrefix("hysteria2://"))
+        val ip = extractIpFromText(decoded)
+        val port = extractPortFromText(decoded)
+        return Pair(ip, port)
+    }
+
+    private fun extractFromPlainConfigWithPort(config: String): Pair<String?, Int?> {
+        return when {
+            config.contains("://") -> extractFromUrlWithPort(config)
+            config.contains("Endpoint = ") -> extractWireguardEndpointWithPort(config)
+            config.trim().startsWith("{") -> extractFromJsonWithPort(config)
+            else -> Pair(null, null)
+        }
+    }
+
+    private fun extractFromUrlWithPort(url: String): Pair<String?, Int?> {
+        val afterProtocol = url.substringAfter("://")
+        val hostPort = afterProtocol.substringBefore('/').substringBefore('?')
+        val parts = hostPort.split(':')
+        val ip = parts.getOrNull(0)?.takeIf { isValidIp(it) }
+        val port = parts.getOrNull(1)?.toIntOrNull()
+        return Pair(ip, port)
+    }
+
+    private fun extractWireguardEndpointWithPort(config: String): Pair<String?, Int?> {
+        val endpoint = config.substringAfter("Endpoint = ").substringBefore('#')
+        val parts = endpoint.split(':')
+        val ip = parts.getOrNull(0)?.takeIf { isValidIp(it) }
+        val port = parts.getOrNull(1)?.toIntOrNull()
+        return Pair(ip, port)
+    }
+
+    private fun extractFromJsonWithPort(jsonText: String): Pair<String?, Int?> {
+        return try {
+            JSONObject(jsonText).let { json ->
+                val ip = listOf("server", "address", "host").firstNotNullOfOrNull { key ->
+                    json.optString(key).takeIf { isValidIp(it) }
+                }
+                val port = listOf("port", "server_port").firstNotNullOfOrNull { key ->
+                    json.optInt(key).takeIf { it > 0 }
+                }
+                Pair(ip, port)
+            }
+        } catch (e: Exception) {
+            Pair(null, null)
+        }
     }
 
     private fun extractDomainFromConfig(config: String): String? {
@@ -141,53 +384,16 @@ class V2rayConfigActivity : BaseActivity() {
         }
     }
 
-    private fun extractFromEncodedConfig(config: String): String? {
-        return try {
-            when {
-                config.startsWith("vmess://") -> handleVmessConfig(config)
-                config.startsWith("vless://") -> handleVlessConfig(config)
-                config.startsWith("ss://") -> handleShadowsocksConfig(config)
-                config.startsWith("trojan://") -> handleTrojanConfig(config)
-                config.startsWith("hysteria2://") -> handleHysteriaConfig(config)
-                else -> null
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Config decoding failed", e)
-            null
+    private fun extractIpFromText(text: String): String? {
+        val ipRegex = """\b(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\b""".toRegex()
+        return ipRegex.find(text)?.value?.takeIf { isValidIp(it) }
+    }
+
+    private fun isValidIp(ip: String): Boolean {
+        if (ip.contains("[a-zA-Z]".toRegex())) return false
+        return ip.split('.').size == 4 && ip.split('.').all { part ->
+            part.toIntOrNull()?.let { it in 0..255 } ?: false
         }
-    }
-
-    private fun handleVmessConfig(config: String): String? {
-        val decoded = decodeBase64Safe(config.removePrefix("vmess://"))
-        return try {
-            JSONObject(decoded).let { json ->
-                listOf("add", "server", "address").firstNotNullOfOrNull { key ->
-                    json.optString(key).takeIf { isValidIp(it) }
-                }
-            }
-        } catch (e: Exception) {
-            extractIpFromText(decoded)
-        }
-    }
-
-    private fun handleVlessConfig(config: String): String? {
-        val decoded = decodeBase64Safe(config.removePrefix("vless://"))
-        return extractIpFromText(decoded)
-    }
-
-    private fun handleShadowsocksConfig(config: String): String? {
-        val decoded = decodeBase64Safe(config.removePrefix("ss://"))
-        return decoded.substringAfter('@').substringBefore(':').takeIf { isValidIp(it) }
-    }
-
-    private fun handleTrojanConfig(config: String): String? {
-        val decoded = decodeBase64Safe(config.removePrefix("trojan://"))
-        return decoded.substringAfter('@').substringBefore(':').takeIf { isValidIp(it) }
-    }
-
-    private fun handleHysteriaConfig(config: String): String? {
-        val decoded = decodeBase64Safe(config.removePrefix("hysteria2://"))
-        return extractIpFromText(decoded)
     }
 
     private fun decodeBase64Safe(encoded: String): String {
@@ -199,53 +405,6 @@ class V2rayConfigActivity : BaseActivity() {
             } catch (e: Exception) {
                 encoded
             }
-        }
-    }
-
-    private fun extractFromPlainConfig(config: String): String? {
-        return when {
-            config.contains("://") -> extractFromUrl(config)
-            config.contains("Endpoint = ") -> extractWireguardEndpoint(config)
-            config.trim().startsWith("{") -> extractFromJson(config)
-            else -> null
-        }
-    }
-
-    private fun extractFromUrl(url: String): String? {
-        return url.substringAfter("://")
-            .substringBefore('/')
-            .substringBefore('?')
-            .substringBefore(':')
-            .takeIf { isValidIp(it) }
-    }
-
-    private fun extractWireguardEndpoint(config: String): String? {
-        return config.substringAfter("Endpoint = ")
-            .substringBefore(':')
-            .takeIf { isValidIp(it) }
-    }
-
-    private fun extractFromJson(jsonText: String): String? {
-        return try {
-            JSONObject(jsonText).let { json ->
-                listOf("server", "address", "host").firstNotNullOfOrNull { key ->
-                    json.optString(key).takeIf { isValidIp(it) }
-                }
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun extractIpFromText(text: String): String? {
-        val ipRegex = """\b(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\b""".toRegex()
-        return ipRegex.find(text)?.value?.takeIf { isValidIp(it) }
-    }
-
-    private fun isValidIp(ip: String): Boolean {
-        if (ip.contains("[a-zA-Z]".toRegex())) return false
-        return ip.split('.').size == 4 && ip.split('.').all { part ->
-            part.toIntOrNull()?.let { it in 0..255 } ?: false
         }
     }
 
@@ -307,10 +466,14 @@ class V2rayConfigActivity : BaseActivity() {
             try {
                 val configContent = fetchConfigContent()
                 val configLine = selectRandomConfigLine(configContent)
-                val serverIp = extractIpFromConfig(configLine)
+                val (serverIp, serverPort) = extractIpAndPortFromConfig(configLine)
                 val location = serverIp?.let { getServerLocation(it) } ?: "No IP detected"
 
-                updateUI(configLine, location)
+                currentConfig = configLine
+                currentIp = serverIp
+                currentPort = serverPort
+
+                updateUI(configLine, location, currentPort)
             } catch (e: Exception) {
                 handleConfigError(e)
             }
@@ -336,15 +499,21 @@ class V2rayConfigActivity : BaseActivity() {
         }
     }
 
-    private suspend fun updateUI(config: String, location: String) {
+    private suspend fun updateUI(config: String, location: String, port: Int) {
         withContext(Dispatchers.Main) {
             textConfig.text = config
-            textLoading.text = detectConfigType(config)
+            textLoading.text = "${detectConfigType(config)} (port: $port)"
             textCountry.text = location
             progressIndicator.hide()
             progressIndicator.visibility = View.GONE
             BgtextConfig.visibility = View.VISIBLE
             BgtextCountry.visibility = View.VISIBLE
+            
+            // Show ping button only if we have a valid IP
+            if (currentIp != null) {
+                BgtextPing.visibility = View.VISIBLE
+                textPingResult.text = "Click ping button to test port $port"
+            }
         }
     }
 
