@@ -53,8 +53,10 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // Inisialisasi visibility
         binding.emptyState.visibility = View.GONE
         binding.loadingIndicator.visibility = View.GONE
+        binding.refreshLayout.visibility = View.VISIBLE
 
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -93,7 +95,9 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
             }
         })
 
+        // Tambahkan pesan awal dan refresh data
         logsets.add(LogcatRecyclerAdapter.parseLog(getString(R.string.pull_down_to_refresh)))
+        refreshData()
     }
 
     private fun getLogcat() {
@@ -321,9 +325,11 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         if (show) {
             binding.emptyState.visibility = View.VISIBLE
             binding.recyclerView.visibility = View.GONE
+            binding.refreshLayout.visibility = View.GONE
         } else {
             binding.emptyState.visibility = View.GONE
             binding.recyclerView.visibility = View.VISIBLE
+            binding.refreshLayout.visibility = View.VISIBLE
         }
     }
 
@@ -403,7 +409,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         adapter.submitList(logsets.toList())
         if (currentQuery.isEmpty() && currentLevelFilter == null) {
             binding.recyclerView.post {
-                safeSmoothScrollToPosition(adapter.itemCount - 1)
+                safeSmoothScrollToPosition(0)
             }
         }
     }
