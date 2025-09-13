@@ -275,15 +275,30 @@
                         android:layout_marginEnd="16.0dip">
                         <LinearLayout
                             android:orientation="horizontal"
+                            android:background="@drawable/uwu_bg_garis_edit_text"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="60.0dip"
                             android:layout_marginTop="16.0dip"
                             android:layout_marginBottom="8.0dip">
-                            <com.google.android.material.materialswitch.MaterialSwitch
-                                android:id="@+id/chk_locked"
+                            <TextView
+                                android:layout_width="0.0dip"
+                                android:layout_height="wrap_content"
+                                android:gravity="start|center"
+                                android:layout_gravity="start|center"
+                                android:layout_marginStart="10.0dip"
                                 android:text="@string/routing_settings_locked"
+                                android:textColor="?android:textColorSecondary"
+                                android:layout_weight="1.0" />
+                            <com.neko.switchbutton.SwitchButton
+                                android:id="@+id/chk_locked"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:gravity="end|center"
+                                android:layout_gravity="end|center"
+                                android:layout_marginEnd="10.0dip"
+                                app:kswAnimationDuration="300"
+                                app:kswBackDrawable="@drawable/uwu_switch_track"
+                                app:kswThumbDrawable="@drawable/uwu_switch_thumb" />
                         </LinearLayout>
                         <LinearLayout
                             android:orientation="vertical"
