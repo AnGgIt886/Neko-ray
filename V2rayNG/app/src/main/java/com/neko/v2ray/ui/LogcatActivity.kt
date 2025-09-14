@@ -81,15 +81,21 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (isScrolledToBottom()) {
+                
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                
+                // Update FAB icon
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                     fabScroll.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
                 } else {
                     fabScroll.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
                 }
                 
-                // Load more logs when scrolling near the top
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                if (layoutManager.findFirstVisibleItemPosition() < 10 && logsetsAll.size > currentLogLimit) {
+                // Load more logs when near the top
+                if (firstVisibleItemPosition < 5 && logsetsAll.size > currentLogLimit) {
                     loadMoreLogs()
                 }
             }
@@ -107,16 +113,32 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
 
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    // Command yang lebih spesifik untuk V2Ray logs
-                    val command = listOf(
-                        "logcat", "-d", "-v", "time", 
-                        "GoLog:I", "tun2socks:I", "${ANG_PACKAGE}:I", 
-                        "AndroidRuntime:E", "System.err:E", "*:S"
+                    // Coba beberapa format command
+                    val commands = arrayOf(
+                        arrayOf("logcat", "-d", "-v", "time", "GoLog:I", "tun2socks:I", "${ANG_PACKAGE}:I", "AndroidRuntime:E", "System.err:E", "*:S"),
+                        arrayOf("logcat", "-d", "-v", "time"),
+                        arrayOf("logcat", "-d")
                     )
                     
-                    val process = Runtime.getRuntime().exec(command.toTypedArray())
-                    val allText = process.inputStream.bufferedReader().useLines { lines ->
-                        lines.take(displayedLogsLimit).toList().reversed()
+                    var allText: List<String> = emptyList()
+                    var success = false
+                    
+                    for (command in commands) {
+                        try {
+                            val process = Runtime.getRuntime().exec(command)
+                            val text = process.inputStream.bufferedReader().useLines { lines ->
+                                lines.take(displayedLogsLimit).toList().reversed()
+                            }
+                            allText = text
+                            success = true
+                            break
+                        } catch (e: Exception) {
+                            continue
+                        }
+                    }
+                    
+                    if (!success) {
+                        throw Exception("All logcat commands failed")
                     }
                     
                     val parsedLogs = allText.map { LogcatRecyclerAdapter.parseLog(it) }
@@ -325,11 +347,10 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         if (show) {
             binding.emptyState.visibility = View.VISIBLE
             binding.recyclerView.visibility = View.GONE
-            binding.refreshLayout.visibility = View.GONE
+            // Jangan sembunyikan refreshLayout, hanya recyclerView
         } else {
             binding.emptyState.visibility = View.GONE
             binding.recyclerView.visibility = View.VISIBLE
-            binding.refreshLayout.visibility = View.VISIBLE
         }
     }
 
@@ -338,7 +359,7 @@ class LogcatActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val file = File(getExternalFilesDir(null), "v2ray_logs_${System.currentTimeMillis()}.txt")
+                val file = File(getExternalFilesDir(null), "nekoray_logs_${System.currentTimeMillis()}.txt")
                 val logText = logsetsAll.joinToString("\n") { it.original }
                 file.writeText(logText)
                 

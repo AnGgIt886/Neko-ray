@@ -112,23 +112,32 @@ class LogcatRecyclerAdapter(private val context: Context) : ListAdapter<ParsedLo
             val level = detectLogLevel(log)
             
             // Pattern untuk format timestamp Android: "MM-DD HH:MM:SS.millis"
+            // Format yang benar: "MM-DD HH:MM:SS.mmm"
             val timestampPattern = "\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}".toRegex()
             val timestampMatch = timestampPattern.find(log)
             
-            var tag = "Unknown"
+            var tag = "System"
             var content = log
             
             if (timestampMatch != null) {
                 val timestamp = timestampMatch.value
                 val remaining = log.substringAfter(timestamp).trim()
                 
-                // Cari tag setelah timestamp (biasanya sebelum spasi pertama)
-                val nextSpaceIndex = remaining.indexOf(' ')
-                if (nextSpaceIndex > 0) {
-                    tag = remaining.substring(0, nextSpaceIndex).trim()
-                    content = remaining.substring(nextSpaceIndex).trim()
+                // Format: timestamp PID-TID/package level/tag: message
+                val pattern = "(\\d+)-(\\d+)/([^\\s]+)\\s+([A-Z])/([^:]+):\\s+(.*)".toRegex()
+                val match = pattern.find(remaining)
+                
+                if (match != null) {
+                    val (pid, tid, packageName, logLevel, logTag, message) = match.destructured
+                    tag = "$packageName/$logTag"
+                    content = message
                 } else {
-                    content = remaining
+                    // Fallback: cari tag setelah timestamp
+                    val nextSpaceIndex = remaining.indexOf(' ')
+                    if (nextSpaceIndex > 0) {
+                        tag = remaining.substring(0, nextSpaceIndex).trim()
+                        content = remaining.substring(nextSpaceIndex).trim()
+                    }
                 }
             }
             
