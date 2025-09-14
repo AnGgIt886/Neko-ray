@@ -21,6 +21,7 @@ import java.io.IOException
 import java.net.Socket
 import java.net.UnknownHostException
 import java.net.InetSocketAddress
+import java.net.SocketTimeoutException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -138,25 +139,42 @@ class V2rayConfigActivity : BaseActivity() {
 
     private suspend fun testPing(ip: String, port: Int) {
         withContext(Dispatchers.Main) {
-            textPingResult.text = "Testing ping to port $port..."
+            textPingResult.text = "Testing ping (port $port)..."
             BgtextPing.visibility = View.VISIBLE
         }
 
         val pingResult = withContext(Dispatchers.IO) {
             try {
+                val url = URL("https://www.gstatic.com/generate_204")
                 val startTime = System.currentTimeMillis()
-                val socket = Socket()
-                socket.connect(InetSocketAddress(ip, port), PING_TIMEOUT)
-                socket.close()
+                
+                val connection = url.openConnection() as HttpURLConnection
+                connection.apply {
+                    connectTimeout = PING_TIMEOUT
+                    readTimeout = PING_TIMEOUT
+                    requestMethod = "GET"
+                    instanceFollowRedirects = false
+                }
+                
+                val responseCode = connection.responseCode
                 val endTime = System.currentTimeMillis()
                 val pingTime = endTime - startTime
-                "Ping: ${pingTime}ms (port $port)"
+                
+                connection.disconnect()
+                
+                if (responseCode == 204) {
+                    "Ping: ${pingTime}ms (config port: $port)"
+                } else {
+                    "Ping: ${pingTime}ms (config port: $port - Response: $responseCode)"
+                }
             } catch (e: UnknownHostException) {
-                "Ping failed: Unknown host (port $port)"
+                "Ping failed: Unknown host (config port: $port)"
+            } catch (e: SocketTimeoutException) {
+                "Ping failed: Timeout (config port: $port)"
             } catch (e: IOException) {
-                "Ping failed: Timeout or no connection (port $port)"
+                "Ping failed: Network error (config port: $port)"
             } catch (e: Exception) {
-                "Ping failed: ${e.localizedMessage} (port $port)"
+                "Ping failed: ${e.localizedMessage} (config port: $port)"
             }
         }
 
@@ -512,7 +530,7 @@ class V2rayConfigActivity : BaseActivity() {
             // Show ping button only if we have a valid IP
             if (currentIp != null) {
                 BgtextPing.visibility = View.VISIBLE
-                textPingResult.text = "Click ping button to test port $port"
+                textPingResult.text = "Click ping button to test (config port: $port)"
             }
         }
     }
