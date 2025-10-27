@@ -162,7 +162,7 @@ jobs:
               ndkVersion = "${{ env.NDK_VERSION }}"' ${{ github.workspace }}/V2rayNG/app/build.gradle.kts
 
       - name: Download dependencies artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: built-dependencies
           path: ${{ github.workspace }}
@@ -272,7 +272,7 @@ jobs:
 
     steps:
       - name: Download APK artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: built-apks
           path: ${{ github.workspace }}/release-assets
