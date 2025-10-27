@@ -129,7 +129,7 @@ jobs:
           key: ${{ steps.cache-libhysteria2.outputs.cache-primary-key }}
 
       - name: Upload dependencies as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: built-dependencies
           path: |
@@ -199,7 +199,7 @@ jobs:
 
       - name: Upload APK artifacts
         if: github.event.inputs.release_tag == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: arm64-v8a
           path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*arm64-v8a.apk
@@ -207,7 +207,7 @@ jobs:
 
       - name: Upload APK artifacts
         if: github.event.inputs.release_tag == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: armeabi-v7a
           path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*armeabi-v7a.apk
@@ -215,7 +215,7 @@ jobs:
 
       - name: Upload APK artifacts
         if: github.event.inputs.release_tag == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: x86
           path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*x86.apk
@@ -223,7 +223,7 @@ jobs:
 
       - name: Upload APK artifacts
         if: github.event.inputs.release_tag == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: x86_64
           path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*x86_64.apk
@@ -231,7 +231,7 @@ jobs:
 
       - name: Upload APK artifacts
         if: github.event.inputs.release_tag == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: universal
           path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/release/*universal.apk
@@ -246,7 +246,7 @@ jobs:
 
       - name: Prepare and upload release assets
         if: github.event.inputs.release_tag != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: built-apks
           path: |
